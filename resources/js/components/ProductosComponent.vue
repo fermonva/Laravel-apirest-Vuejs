@@ -4,14 +4,6 @@
       <div>
         <div class="card">
           <div class="card-body" style="width: 1080px;background-color: #F6F6F6;">
-            <!-- <div class="row" v-if="spinnerDetalle">
-              <div class="col-md-12 text-center bg-white">
-                <div class="spinner-border" role="status">
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div>
-            </div>-->
-
             <div>
               <div>
                 <strong>Gestión de Productos</strong>
@@ -60,18 +52,6 @@
                 style="background-color: #017AAF;color: white;"
               >Un producto registrado.[productos activos:{{productosActivos}}] - [Productos pendientes por activar:0] - [productos inactivos:0]</p>
             </div>
-
-            <!-- <div v-if="!spinnerDetalle && mostrarDetalle"> -->
-            <!-- <div class="table-responsive">
-              <label>
-                <strong>Gestión de Productos</strong>
-              </label>
-              <table
-                  id="productos"
-                  class="table table-striped table-bordered table-hover"
-                  style="width:100%"
-              ></table>
-            </div>-->
 
             <!-- Modal Editar -->
             <div
@@ -300,50 +280,50 @@ export default {
       column: [
         {
           title: "Nombre del producto",
-          key: "nombre",
-          slot: "nombre",
+          key  : "nombre",
+          slot : "nombre",
           width: 200,
         },
         {
           title: "Código",
-          key: "codigo",
+          key  : "codigo",
         },
         {
           title: "Existencia",
-          key: "existencia",
+          key  : "existencia",
           align: "center",
           width: 150,
         },
         {
           title: "Bodega",
-          key: "bodega",
+          key  : "bodega",
         },
         {
           title: "Descripción",
-          key: "descripcion",
+          key  : "descripcion",
           width: 150,
         },
         {
           title: "Editar",
-          slot: "action",
+          slot : "action",
           align: "center",
         },
         {
           title: "Estado",
-          key: "estado",
+          key  : "estado",
           align: "center",
-          slot: "estado",
+          slot : "estado",
         },
       ],
       productos: [],
       objetoProducto: {
         id_producto: null,
-        nombre: null,
-        codigo: null,
-        existencia: null,
-        bodega: null,
+        nombre     : null,
+        codigo     : null,
+        existencia : null,
+        bodega     : null,
         descripcion: null,
-        estado: null,
+        estado     : null,
       },
       estados: [],
     };
@@ -367,57 +347,34 @@ export default {
     // remove(index) {
     //   this.productos.splice(index, 1);
     // },
-    // consultarDatos(param) {
-    //   //   this.spinnerDetalle = true;
-    //   //   this.mostrarDetalle = false;
-    //   this.loading = true;
-    //   axios
-    //     .post("productos/consultarDatos", {})
-    //     .then((response) => {
-    //       this.productos = response.data.productos;
-    //       //   this.spinnerDetalle = false;
-    //       //   this.mostrarDetalle = true;
-    //       this.loading = false;
-    //     })
-    //     .then((response) => {
-    //       //   this.imprimirTabla();
-    //     })
-    //     .catch((error) => {});
-    // },
     consultarEstados(param) {
-      // this.spinnerDetalle = true;
-      // this.mostrarDetalle = false;
-
       axios
         .post("productos/consultarDatos", {})
         .then((response) => {
           this.estados = response.data.estados;
-          // this.spinnerDetalle = false;
-          // this.mostrarDetalle = true;
         })
         .catch((error) => {});
     },
     asignarEstado(parametro) {
-      //console.log(parametro);
       this.objetoProducto.id_producto = parametro.id_producto;
-      this.objetoProducto.nombre = parametro.nombre;
-      this.objetoProducto.codigo = parametro.codigo;
-      this.objetoProducto.existencia = parametro.existencia;
-      this.objetoProducto.bodega = parametro.bodega;
+      this.objetoProducto.nombre      = parametro.nombre;
+      this.objetoProducto.codigo      = parametro.codigo;
+      this.objetoProducto.existencia  = parametro.existencia;
+      this.objetoProducto.bodega      = parametro.bodega;
       this.objetoProducto.descripcion = parametro.descripcion;
-      this.objetoProducto.estado = parametro.idestado;
+      this.objetoProducto.estado      = parametro.idestado;
       $("#editarModal").modal("show");
     },
     editarProducto() {
       axios
         .post("productos/editarProducto", {
           id_producto: this.objetoProducto.id_producto,
-          nombre: this.objetoProducto.nombre,
-          codigo: this.objetoProducto.codigo,
-          existencia: this.objetoProducto.existencia,
-          bodega: this.objetoProducto.bodega,
+          nombre     : this.objetoProducto.nombre,
+          codigo     : this.objetoProducto.codigo,
+          existencia : this.objetoProducto.existencia,
+          bodega     : this.objetoProducto.bodega,
           descripcion: this.objetoProducto.descripcion,
-          estado: this.objetoProducto.estado,
+          estado     : this.objetoProducto.estado,
         })
         .then((response) => {
           $("#editarModal").modal("hide");
@@ -440,12 +397,12 @@ export default {
     crearProducto() {
       axios
         .post("productos/crearProducto", {
-          nombre: this.objetoProducto.nombre,
-          codigo: this.objetoProducto.codigo,
-          existencia: this.objetoProducto.existencia,
-          bodega: this.objetoProducto.bodega,
+          nombre     : this.objetoProducto.nombre,
+          codigo     : this.objetoProducto.codigo,
+          existencia : this.objetoProducto.existencia,
+          bodega     : this.objetoProducto.bodega,
           descripcion: this.objetoProducto.descripcion,
-          estado: this.objetoProducto.estado,
+          estado     : this.objetoProducto.estado,
         })
         .then((response) => {
           $("#crearModal").modal("hide");
@@ -466,12 +423,12 @@ export default {
 
     limpiarCampos() {
       this.objetoProducto.id_producto = null;
-      this.objetoProducto.nombre = null;
-      this.objetoProducto.codigo = null;
-      this.objetoProducto.existencia = null;
-      this.objetoProducto.bodega = null;
+      this.objetoProducto.nombre      = null;
+      this.objetoProducto.codigo      = null;
+      this.objetoProducto.existencia  = null;
+      this.objetoProducto.bodega      = null;
       this.objetoProducto.descripcion = null;
-      this.objetoProducto.estado = null;
+      this.objetoProducto.estado      = null;
     },
   },
 };
