@@ -6,7 +6,7 @@
           <div class="card-body" style="width: 1080px;background-color: #F6F6F6;">
             <div>
               <div>
-                <strong>Gestión de Productos</strong>
+                <strong>Gestión de Productos - Filtro de Buscador</strong>
                 <Button
                   color="#638695"
                   style="float: right;background-color: #06C4BD;color: white;"
@@ -18,8 +18,8 @@
               <div>
                 <label for>Nombre del producto</label>
                 <Input
-                type="text"
-                @on-enter="filtro"
+                  type="text"
+                  @on-enter="filtro"
                   v-model="filtro_nombre"
                   @on-search="filtro"
                   placeholder="Ingrese su busqueda..."
@@ -49,7 +49,7 @@
                   <Icon type="md-checkmark-circle" style="width: 30px;" size="24" color="#06C4BD" />
                   {{ row.nombre }}
                 </template>
-                <template slot-scope="{ row, index }" slot="action">
+                <template slot-scope="{ index }" slot="action">
                   <Icon type="md-create" color="#638695" size="24" @click="show(index)" />
                   <!-- <Button type="error" size="small" @click="remove(index)">Delete</Button> -->
                 </template>
@@ -362,10 +362,12 @@ export default {
     filtro() {
       if (this.filtro_nombre === '') {
         this.productos = this.productosbuscar;
-      }else{
+      } else {
         this.productos = this.productosbuscar;
         this.productos = this.productos.filter((producto) => {
-          return producto.nombre.toLowerCase() === this.filtro_nombre.toLowerCase();
+          return (
+            producto.nombre.toLowerCase() === this.filtro_nombre.toLowerCase()
+          );
         });
       }
     },
