@@ -2,6 +2,7 @@
 
 @section('content')
 <div>
-    <productos-component></productos-component>
+    <productos_component></productos_component>
+    <example_component></example_component>
 </div>
 @endsection

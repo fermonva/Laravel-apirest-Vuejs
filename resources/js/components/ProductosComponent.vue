@@ -17,17 +17,28 @@
 
               <div>
                 <label for>Nombre del producto</label>
-                <Input placeholder="Ingrese su busqueda..." style="width: 200px" />
-                <Button color="#638695" style="background-color: #6DAEC7;color: white;">Buscar</Button>
+                <Input
+                type="text"
+                @on-enter="filtro"
+                  v-model="filtro_nombre"
+                  @on-search="filtro"
+                  placeholder="Ingrese su busqueda..."
+                  style="width: 200px"
+                />
+                <Button
+                  @click="filtro"
+                  color="#638695"
+                  style="background-color: #6DAEC7;color: white;"
+                >Buscar</Button>
                 <CheckboxGroup style="float: right;">
                   <Checkbox label="Mostrar todos">Mostrar todos</Checkbox>
-                  <Checkbox label="Activos">
+                  <Checkbox label="Activos" v-model="filterActivos">
                     <span>Activos</span>
                   </Checkbox>
-                  <Checkbox label="Inactivos">
+                  <Checkbox label="Inactivos" v-model="filterInactivos">
                     <span>Inactivos</span>
                   </Checkbox>
-                  <Checkbox label="Pendiente">
+                  <Checkbox label="Pendiente" v-model="filterPendiente">
                     <span>Pendiente</span>
                   </Checkbox>
                 </CheckboxGroup>
@@ -50,7 +61,7 @@
 
               <p
                 style="background-color: #017AAF;color: white;"
-              >Un producto registrado.[productos activos:{{productosActivos}}] - [Productos pendientes por activar:0] - [productos inactivos:0]</p>
+              >Un producto registrado.[productos activos:] - [Productos pendientes por activar:0] - [productos inactivos:0]</p>
             </div>
 
             <!-- Modal Editar -->
@@ -270,8 +281,11 @@ export default {
   mounted() {
     this.loading = true;
     this.ProductoService.getProductos().then(
-      (productos) => (this.productos = productos)
+      (productos) => (
+        (this.productos = productos), (this.productosbuscar = this.productos)
+      )
     );
+
     this.loading = false;
   },
   data() {
@@ -280,73 +294,81 @@ export default {
       column: [
         {
           title: "Nombre del producto",
-          key  : "nombre",
-          slot : "nombre",
+          key: "nombre",
+          slot: "nombre",
           width: 200,
         },
         {
           title: "Código",
-          key  : "codigo",
+          key: "codigo",
         },
         {
           title: "Existencia",
-          key  : "existencia",
+          key: "existencia",
           align: "center",
           width: 150,
         },
         {
           title: "Bodega",
-          key  : "bodega",
+          key: "bodega",
         },
         {
           title: "Descripción",
-          key  : "descripcion",
+          key: "descripcion",
           width: 150,
         },
         {
           title: "Editar",
-          slot : "action",
+          slot: "action",
           align: "center",
         },
         {
           title: "Estado",
-          key  : "estado",
+          key: "estado",
           align: "center",
-          slot : "estado",
+          slot: "estado",
         },
       ],
+      productosbuscar: [],
       productos: [],
+      filterActivos: null,
+      filterInactivos: null,
+      filterPendiente: null,
+      filtro_nombre: null,
       objetoProducto: {
         id_producto: null,
-        nombre     : null,
-        codigo     : null,
-        existencia : null,
-        bodega     : null,
+        nombre: null,
+        codigo: null,
+        existencia: null,
+        bodega: null,
         descripcion: null,
-        estado     : null,
+        id_estado: null,
+        estado: null,
       },
       estados: [],
     };
   },
-  computed: {
-    productosActivos() {
-      let count;
-      for (let estado of this.productos) {
-        count += estado.id_estado;
-      }
-      return count;
-    },
-  },
+  computed: {},
   methods: {
     show(index) {
       this.$Modal.info({
         title: "Producto",
-        content: `Nombre：${this.productos[index].nombre}<br>Código：${this.productos[index].codigo}<br>Existencia：${this.productos[index].existencia}<br>Bodega：${this.productos[index].bodega}<br>Descripción：${this.productos[index].descripcion}<br>Estado:${this.productos[index].estado}`,
+        content: `Nombre：${this.productos[index].nombre}<br>Código：${this.productos[index].codigo}<br>Existencia：${this.productos[index].existencia}<br>Bodega：${this.productos[index].bodega}<br>Descripción：${this.productos[index].descripcion}<br>Estado:${this.productos[index].id_estado}`,
       });
     },
     // remove(index) {
     //   this.productos.splice(index, 1);
     // },
+    filtro() {
+      if (this.filtro_nombre === '') {
+        this.productos = this.productosbuscar;
+      }else{
+        this.productos = this.productosbuscar;
+        this.productos = this.productos.filter((producto) => {
+          return producto.nombre.toLowerCase() === this.filtro_nombre.toLowerCase();
+        });
+      }
+    },
     consultarEstados(param) {
       axios
         .post("productos/consultarDatos", {})
@@ -357,24 +379,24 @@ export default {
     },
     asignarEstado(parametro) {
       this.objetoProducto.id_producto = parametro.id_producto;
-      this.objetoProducto.nombre      = parametro.nombre;
-      this.objetoProducto.codigo      = parametro.codigo;
-      this.objetoProducto.existencia  = parametro.existencia;
-      this.objetoProducto.bodega      = parametro.bodega;
+      this.objetoProducto.nombre = parametro.nombre;
+      this.objetoProducto.codigo = parametro.codigo;
+      this.objetoProducto.existencia = parametro.existencia;
+      this.objetoProducto.bodega = parametro.bodega;
       this.objetoProducto.descripcion = parametro.descripcion;
-      this.objetoProducto.estado      = parametro.idestado;
+      this.objetoProducto.id_estado = parametro.id_estado;
       $("#editarModal").modal("show");
     },
     editarProducto() {
       axios
         .post("productos/editarProducto", {
           id_producto: this.objetoProducto.id_producto,
-          nombre     : this.objetoProducto.nombre,
-          codigo     : this.objetoProducto.codigo,
-          existencia : this.objetoProducto.existencia,
-          bodega     : this.objetoProducto.bodega,
+          nombre: this.objetoProducto.nombre,
+          codigo: this.objetoProducto.codigo,
+          existencia: this.objetoProducto.existencia,
+          bodega: this.objetoProducto.bodega,
           descripcion: this.objetoProducto.descripcion,
-          estado     : this.objetoProducto.estado,
+          id_estado: this.objetoProducto.id_estado,
         })
         .then((response) => {
           $("#editarModal").modal("hide");
@@ -397,12 +419,12 @@ export default {
     crearProducto() {
       axios
         .post("productos/crearProducto", {
-          nombre     : this.objetoProducto.nombre,
-          codigo     : this.objetoProducto.codigo,
-          existencia : this.objetoProducto.existencia,
-          bodega     : this.objetoProducto.bodega,
+          nombre: this.objetoProducto.nombre,
+          codigo: this.objetoProducto.codigo,
+          existencia: this.objetoProducto.existencia,
+          bodega: this.objetoProducto.bodega,
           descripcion: this.objetoProducto.descripcion,
-          estado     : this.objetoProducto.estado,
+          id_estado: this.objetoProducto.id_estado,
         })
         .then((response) => {
           $("#crearModal").modal("hide");
@@ -423,12 +445,12 @@ export default {
 
     limpiarCampos() {
       this.objetoProducto.id_producto = null;
-      this.objetoProducto.nombre      = null;
-      this.objetoProducto.codigo      = null;
-      this.objetoProducto.existencia  = null;
-      this.objetoProducto.bodega      = null;
+      this.objetoProducto.nombre = null;
+      this.objetoProducto.codigo = null;
+      this.objetoProducto.existencia = null;
+      this.objetoProducto.bodega = null;
       this.objetoProducto.descripcion = null;
-      this.objetoProducto.estado      = null;
+      this.objetoProducto.id_estado = null;
     },
   },
 };
