@@ -16,7 +16,7 @@
               <br />
 
               <div>
-                <label for>Nombre del producto</label>
+                <label>Nombre del producto</label>
                 <Input
                   type="text"
                   @on-enter="filtro"
@@ -32,7 +32,7 @@
                 >Buscar</Button>
                 <CheckboxGroup style="float: right;">
                   <Checkbox label="Mostrar todos">Mostrar todos</Checkbox>
-                  <Checkbox label="Activos" v-model="filterActivos">
+                  <Checkbox label="Activos" v-model="filterActivos" v-bind="productos">
                     <span>Activos</span>
                   </Checkbox>
                   <Checkbox label="Inactivos" v-model="filterInactivos">
@@ -44,7 +44,7 @@
                 </CheckboxGroup>
               </div>
 
-              <Table stripe :loading="loading" :columns="column" :data="productos">
+              <Table stripe :loading="loading" :columns="column" :data="mostrarActivos">
                 <template slot-scope="{ row }" slot="nombre">
                   <Icon type="md-checkmark-circle" style="width: 30px;" size="24" color="#06C4BD" />
                   {{ row.nombre }}
@@ -331,9 +331,9 @@ export default {
       ],
       productosbuscar: [],
       productos: [],
-      filterActivos: null,
-      filterInactivos: null,
-      filterPendiente: null,
+      filterActivos: false,
+      filterInactivos: false,
+      filterPendiente: false,
       filtro_nombre: null,
       objetoProducto: {
         id_producto: null,
@@ -348,7 +348,19 @@ export default {
       estados: [],
     };
   },
-  computed: {},
+  computed: {
+    mostrarActivos() {
+      if (this.filterActivos == true) {
+        return this.productos.filter((producto) => (producto.id_estado == 1));
+      } if (this.filterInactivos == true) {
+          return this.productos.filter((producto) => (producto.id_estado == 2));
+      }if (this.filterPendiente == true) {
+          return this.productos.filter((producto) => (producto.id_estado == 3));
+      }else {
+        return this.productos;
+      }
+    },
+  },
   methods: {
     show(index) {
       this.$Modal.info({
@@ -360,7 +372,7 @@ export default {
     //   this.productos.splice(index, 1);
     // },
     filtro() {
-      if (this.filtro_nombre === '') {
+      if (this.filtro_nombre === "") {
         this.productos = this.productosbuscar;
       } else {
         this.productos = this.productosbuscar;

@@ -1,471 +1,220 @@
 <template>
   <div class="container">
-    <div class="row justify-content-center">
-      <div>
-        <div class="card">
-          <div class="card-body" style="width: 1080px;background-color: #F6F6F6;">
-            <div>
-              <div>
-                <strong>Gestión de Productos - Filtro de CheckBox</strong>
-                <Button
-                  color="#638695"
-                  style="float: right;background-color: #06C4BD;color: white;"
-                  shape="circle"
-                >Crear producto</Button>
-              </div>
-              <br />
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          <strong>Gestion de Productos</strong>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm rounded-pill float-right"
+          >Crear producto</button>
+        </h5>
 
-              <div>
-                <label for>Nombre del producto</label>
-                <Input
-                  type="text"
-                  @on-enter="filtro"
-                  v-model="filtro_nombre"
-                  @on-search="filtro"
-                  placeholder="Ingrese su busqueda..."
-                  style="width: 200px"
-                />
-                <Button
-                  @click="filtro"
-                  color="#638695"
-                  style="background-color: #6DAEC7;color: white;"
-                >Buscar</Button>
-                <CheckboxGroup style="float: right;">
-                  <Checkbox label="Mostrar todos">Mostrar todos</Checkbox>
-                  <Checkbox label="Activos" v-model="filterActivos">
-                    <span>Activos</span>
-                  </Checkbox>
-                  <Checkbox label="Inactivos" v-model="filterInactivos">
-                    <span>Inactivos</span>
-                  </Checkbox>
-                  <Checkbox label="Pendiente" v-model="filterPendiente">
-                    <span>Pendiente</span>
-                  </Checkbox>
-                </CheckboxGroup>
-              </div>
+        <div class="form overflow-hidden full-width">
+          <div class="form-group form-inline float-left">
+            <label for>Nombre del producto</label>
+            <input class="m-2" type="text" />
+            <button type="button" class="btn btn-info btn-sm">Buscar</button>
+          </div>
 
-              <Table stripe :loading="loading" :columns="column" :data="productos">
-                <template slot-scope="{ row }" slot="nombre">
-                  <Icon type="md-checkmark-circle" style="width: 30px;" size="24" color="#06C4BD" />
-                  {{ row.nombre }}
-                </template>
-                <template slot-scope="{ index }" slot="action">
-                  <Icon type="md-create" color="#638695" size="24" @click="show(index)" />
-                  <!-- <Button type="error" size="small" @click="remove(index)">Delete</Button> -->
-                </template>
-
-                <template slot-scope="{ row }" slot="estado" style="width: 30px;">
-                  <p style="background-color:#00CF00;">{{row.estado}}</p>
-                </template>
-              </Table>
-
-              <p
-                style="background-color: #017AAF;color: white;"
-              >Un producto registrado.[productos activos:] - [Productos pendientes por activar:0] - [productos inactivos:0]</p>
-            </div>
-
-            <!-- Modal Editar -->
-            <div
-              class="modal fade"
-              id="editarModal"
-              tabindex="-1"
-              role="dialog"
-              aria-labelledby="editarModalLabel"
-              aria-hidden="true"
-            >
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="editarModalLabel">Producto</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <form @submit.prevent="confirmarEditar">
-                      <div class="form-group">
-                        <label for="InputNombre">Nombre</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-model="objetoProducto.nombre"
-                          aria-describedby="Nombre Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Código</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-model="objetoProducto.codigo"
-                          aria-describedby="Codigo Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Existencia</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-model="objetoProducto.existencia"
-                          aria-describedby="Existencia Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Bodega</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-model="objetoProducto.bodega"
-                          aria-describedby="Bodega Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Descripción</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-model="objetoProducto.descripcion"
-                          aria-describedby="Descripción Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Estado</label>
-
-                        <select class="form-control" v-model="objetoProducto.estado">
-                          <option :selected="true" value>-- Seleccione --</option>
-                          <option
-                            v-for="(option,index) in estados"
-                            v-bind:value="option.id_estado"
-                            v-bind:key="index"
-                          >{{ option.nombre }}</option>
-                        </select>
-                      </div>
-
-                      <button type="submit" class="btn btn-success">Actualizar</button>
-                    </form>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Modal Crear producto -->
-            <div
-              class="modal fade"
-              id="crearModal"
-              tabindex="-1"
-              role="dialog"
-              aria-labelledby="crearModalLabel"
-              aria-hidden="true"
-            >
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="crearModalLabel">Producto</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <form @submit.prevent="crearProducto">
-                      <div class="form-group">
-                        <label for="InputNombre">Nombre</label>
-                        <input
-                          v-model="objetoProducto.nombre"
-                          type="text"
-                          class="form-control"
-                          aria-describedby="Nombre Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Código</label>
-                        <input
-                          v-model="objetoProducto.codigo"
-                          type="text"
-                          class="form-control"
-                          aria-describedby="Codigo Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Existencia</label>
-                        <input
-                          v-model="objetoProducto.existencia"
-                          type="text"
-                          class="form-control"
-                          aria-describedby="Existencia Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Bodega</label>
-                        <input
-                          v-model="objetoProducto.bodega"
-                          type="text"
-                          class="form-control"
-                          aria-describedby="Bodega Producto"
-                          placeholder="Centro"
-                          required
-                          disabled
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Descripción</label>
-                        <input
-                          v-model="objetoProducto.descripcion"
-                          type="text"
-                          class="form-control"
-                          aria-describedby="Descripción Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Estado</label>
-
-                        <select name="cars" class="custom-select" v-model="objetoProducto.estado">
-                          <option selected>Seleccione un estado</option>
-                          <option
-                            v-for="(option,index) in estados"
-                            v-bind:value="option.id_estado"
-                            v-bind:key="index"
-                          >{{ option.nombre }}</option>
-                        </select>
-                      </div>
-
-                      <button type="submit" class="btn btn-success">Guardar</button>
-                    </form>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Termina modal crearProducto -->
-
-            <br />
+          <div class="form-check-inline float-right pt-3">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" />
+            <label class="form-check-label" for="inlineCheckbox1">Mostrar todos</label>
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" />
+            <label class="form-check-label" for="inlineCheckbox1">Activos</label>
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" />
+            <label class="form-check-label" for="inlineCheckbox1">Inactivos</label>
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" />
+            <label class="form-check-label" for="inlineCheckbox1">Pendiente</label>
           </div>
         </div>
+
+        <table class="table table-striped">
+          <thead>
+            <tr class="columns">
+              <th scope="col">First</th>
+              <th scope="col">Last</th>
+              <th scope="col">Handle</th>
+              <th scope="col">First</th>
+              <th scope="col">Last</th>
+              <th scope="col">Handle</th>
+              <th scope="col">First</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mark</td>
+              <td>Otto</td>
+              <td>@mdo</td>
+              <td>Mark</td>
+              <td>Otto</td>
+              <td class="text-center">
+                <svg
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 16 16"
+                  class="bi bi-pencil"
+                  fill="#06C4BD"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"
+                  />
+                </svg>
+              </td>
+              <td>Mark</td>
+            </tr>
+            <tr>
+              <td>Mark</td>
+              <td>Otto</td>
+              <td>@mdo</td>
+              <td>Mark</td>
+              <td>Otto</td>
+              <td class="text-center">
+                <svg
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 16 16"
+                  class="bi bi-pencil"
+                  fill="#06C4BD"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"
+                  />
+                </svg>
+              </td>
+              <td>Mark</td>
+            </tr>
+          </tbody>
+        </table>
+        <p
+          style="background-color: #017AAF;color: white;"
+        >Un producto registrado.[productos activos:] - [Productos pendientes por activar:0] - [productos inactivos:0]</p>
       </div>
     </div>
+    <!-- mensaje -->
+    <h1 v-show="mensaje">{{mensajeAlReves}}</h1>
+    <input class="m-2" type="text" v-model="mensaje" />
+
+    <!-- dias -->
+    <li v-for="(dia, index) in dias" :key="index">{{ dia }}</li>
+    <input
+      class="m-2"
+      type="text"
+      placeholder="Escribe"
+      v-model="nuevoDia"
+      v-on:keyup.enter="agregar"
+    />
+    <button class="btn btn-danger" v-on:click="agregar">Agregar</button>
+    <br />
+
+    <!-- ordenar heroes -->
+    <li v-for="(heroe, index) in ordenarHeroes" :key="`A-${index}`">{{heroe}}</li>
+    <br />
+
+    <!-- Buscar heroe al escribir -->
+    <li v-for="(jugador, index) in buscarjugadores" :key="`B-${index}`">{{jugador}}</li>
+    <input type="search" v-model="busqueda" placeholder="Buscar jugador" />
+
+    <pre class="fondo">{{$data}}</pre>
   </div>
-  <!-- </div> -->
 </template>
 
 <script>
-import ProductoService from "../services/ProductoService";
-
 export default {
-  created() {
-    this.ProductoService = new ProductoService();
-  },
-  mounted() {
-    this.loading = true;
-    this.ProductoService.getProductos().then(
-      (productos) => (
-        (this.productos = productos), (this.productosbuscar = this.productos)
-      )
-    );
-
-    this.loading = false;
-  },
   data() {
     return {
-      loading: false,
-      column: [
+      mensaje: "hola mundo",
+      nuevoDia: null,
+      dias: ["lunes", "martes", "miercoles", "jueves", "viernes"],
+      busqueda: "",
+      heroes: [
         {
-          title: "Nombre del producto",
-          key: "nombre",
-          slot: "nombre",
-          width: 200,
+          squadName: "Super hero squad",
+          homeTown: "Metro City",
+          formed: 2016,
+          secretBase: "Super tower",
+          active: true,
         },
         {
-          title: "Código",
-          key: "codigo",
-        },
-        {
-          title: "Existencia",
-          key: "existencia",
-          align: "center",
-          width: 150,
-        },
-        {
-          title: "Bodega",
-          key: "bodega",
-        },
-        {
-          title: "Descripción",
-          key: "descripcion",
-          width: 150,
-        },
-        {
-          title: "Editar",
-          slot: "action",
-          align: "center",
-        },
-        {
-          title: "Estado",
-          key: "estado",
-          align: "center",
-          slot: "estado",
+          squadName: "Minimal Operator",
+          homeTown: "Metro maal",
+          formed: 2015,
+          secretBase: "Super",
+          active: true,
         },
       ],
-      productosbuscar: [],
-      productos: [],
-      filterActivos: null,
-      filterInactivos: null,
-      filterPendiente: null,
-      filtro_nombre: null,
-      objetoProducto: {
-        id_producto: null,
-        nombre: null,
-        codigo: null,
-        existencia: null,
-        bodega: null,
-        descripcion: null,
-        id_estado: null,
-        estado: null,
-      },
-      estados: [],
+      jugadores: [
+        {
+          squadName: "Messi",
+          homeTown: "Metro City",
+          formed: 2016,
+          secretBase: "Super tower",
+          active: true,
+        },
+        {
+          squadName: "Cristiano",
+          homeTown: "Metro maal",
+          formed: 2015,
+          secretBase: "Super",
+          active: true,
+        },
+      ],
     };
   },
-  computed: {},
   methods: {
-    show(index) {
-      this.$Modal.info({
-        title: "Producto",
-        content: `Nombre：${this.productos[index].nombre}<br>Código：${this.productos[index].codigo}<br>Existencia：${this.productos[index].existencia}<br>Bodega：${this.productos[index].bodega}<br>Descripción：${this.productos[index].descripcion}<br>Estado:${this.productos[index].id_estado}`,
-      });
+    agregar() {
+      this.dias.push(this.nuevoDia);
+      this.nuevoDia = null;
     },
-    // remove(index) {
-    //   this.productos.splice(index, 1);
-    // },
-    filtro() {
-      if (this.filtro_nombre === "") {
-        this.productos = this.productosbuscar;
-      } else {
-        this.productos = this.productosbuscar;
-        this.productos = this.productos.filter((producto) => {
-          return (
-            producto.nombre.toLowerCase() === this.filtro_nombre.toLowerCase()
-          );
-        });
-      }
+  },
+  computed: {
+    mensajeAlReves() {
+      return this.mensaje.split("").reverse().join("");
     },
-    consultarEstados(param) {
-      axios
-        .post("productos/consultarDatos", {})
-        .then((response) => {
-          this.estados = response.data.estados;
-        })
-        .catch((error) => {});
+    ordenarHeroes() {
+      return this.heroes.sort((a, b) => b.formed + a.formed);  // Javascript
+    //   return _.orderBy(this.heroes, ["formed"], ["asc"]); // lodash
     },
-    asignarEstado(parametro) {
-      this.objetoProducto.id_producto = parametro.id_producto;
-      this.objetoProducto.nombre = parametro.nombre;
-      this.objetoProducto.codigo = parametro.codigo;
-      this.objetoProducto.existencia = parametro.existencia;
-      this.objetoProducto.bodega = parametro.bodega;
-      this.objetoProducto.descripcion = parametro.descripcion;
-      this.objetoProducto.id_estado = parametro.id_estado;
-      $("#editarModal").modal("show");
-    },
-    editarProducto() {
-      axios
-        .post("productos/editarProducto", {
-          id_producto: this.objetoProducto.id_producto,
-          nombre: this.objetoProducto.nombre,
-          codigo: this.objetoProducto.codigo,
-          existencia: this.objetoProducto.existencia,
-          bodega: this.objetoProducto.bodega,
-          descripcion: this.objetoProducto.descripcion,
-          id_estado: this.objetoProducto.id_estado,
-        })
-        .then((response) => {
-          $("#editarModal").modal("hide");
-          return response.data.msg;
-        })
-        .then((response) => {
-          this.consultarDatos();
-          return response;
-        })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            title: response,
-          });
-        })
-
-        .catch((error) => {});
-    },
-
-    crearProducto() {
-      axios
-        .post("productos/crearProducto", {
-          nombre: this.objetoProducto.nombre,
-          codigo: this.objetoProducto.codigo,
-          existencia: this.objetoProducto.existencia,
-          bodega: this.objetoProducto.bodega,
-          descripcion: this.objetoProducto.descripcion,
-          id_estado: this.objetoProducto.id_estado,
-        })
-        .then((response) => {
-          $("#crearModal").modal("hide");
-          return response.data.msg;
-        })
-        .then((response) => {
-          this.consultarDatos();
-          return response;
-        })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            title: response,
-          });
-        })
-        .catch((error) => {});
-    },
-
-    limpiarCampos() {
-      this.objetoProducto.id_producto = null;
-      this.objetoProducto.nombre = null;
-      this.objetoProducto.codigo = null;
-      this.objetoProducto.existencia = null;
-      this.objetoProducto.bodega = null;
-      this.objetoProducto.descripcion = null;
-      this.objetoProducto.id_estado = null;
+    buscarjugadores() {
+      return this.jugadores.filter((jugador) =>
+        jugador.squadName.toLowerCase().includes(this.busqueda.toLowerCase())
+      );
     },
   },
 };
 </script>
-
 <style>
-.ivu-table th {
+.btn-info {
+  color: white;
+  background-color: #6daec7;
+}
+
+.btn-primary {
+  color: white;
+  background-color: #06c4bd;
+}
+
+.card-body {
+  background-color: #f6f6f6;
+}
+
+.columns {
   background-color: #017aaf;
   color: white;
 }
-.ivu-table-wrapper {
-  margin-top: 10px;
+.fondo{
+    background-color: #c9c9c9;
 }
 </style>
-
-
