@@ -33,6 +33,10 @@ Vue.component(
     "productos_component",
     require("./components/ProductosComponent.vue").default
 );
+Vue.component(
+    "tareas_component",
+    require("./components/TareasComponent.vue").default
+);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

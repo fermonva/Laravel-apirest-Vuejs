@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+      <h1 class="display-3">ExampleComponent</h1>
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">
@@ -126,13 +127,32 @@
     <!-- Buscar heroe al escribir -->
     <li v-for="(jugador, index) in buscarjugadores" :key="`B-${index}`">{{jugador}}</li>
     <input type="search" v-model="busqueda" placeholder="Buscar jugador" />
+    <br>
 
-    <pre class="fondo">{{$data}}</pre>
+    <!-- imagenes api -->
+    <img
+      v-for="(usuario, index) in usuarios"
+      :key="`C-${index}`"
+      v-bind:src="usuario.picture.thumbnail"
+      :alt="usuario.name.first"
+    />
+
+    <!-- <pre class="fondo">{{$data}}</pre> -->
+    <br>
+
+    <misTareas></misTareas>
+
+
   </div>
 </template>
 
 <script>
+import misTareas from './TareasComponent.vue'
 export default {
+    components:{misTareas},
+  mounted() {
+    this.cargarPersonas();
+  },
   data() {
     return {
       mensaje: "hola mundo",
@@ -171,6 +191,7 @@ export default {
           active: true,
         },
       ],
+      usuarios: [],
     };
   },
   methods: {
@@ -178,14 +199,21 @@ export default {
       this.dias.push(this.nuevoDia);
       this.nuevoDia = null;
     },
+    cargarPersonas() {
+      return axios
+        .get("https://randomuser.me/api/?results=100")
+        .then((response) => {
+          this.usuarios = response.data.results;
+        });
+    },
   },
   computed: {
     mensajeAlReves() {
       return this.mensaje.split("").reverse().join("");
     },
     ordenarHeroes() {
-      return this.heroes.sort((a, b) => b.formed + a.formed);  // Javascript
-    //   return _.orderBy(this.heroes, ["formed"], ["asc"]); // lodash
+      return this.heroes.sort((a, b) => b.formed + a.formed); // Javascript
+      //   return _.orderBy(this.heroes, ["formed"], ["asc"]); // lodash
     },
     buscarjugadores() {
       return this.jugadores.filter((jugador) =>
@@ -214,7 +242,7 @@ export default {
   background-color: #017aaf;
   color: white;
 }
-.fondo{
-    background-color: #c9c9c9;
+.fondo {
+  background-color: #c9c9c9;
 }
 </style>

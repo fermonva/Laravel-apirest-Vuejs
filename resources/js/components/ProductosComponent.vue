@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+            <h1 class="display-3">ProductosComponent</h1>
     <div class="row justify-content-center">
       <div>
         <div class="card">
@@ -21,12 +22,11 @@
                   type="text"
                   @on-enter="filtro"
                   v-model="filtro_nombre"
-                  @on-search="filtro"
                   placeholder="Ingrese su busqueda..."
                   style="width: 200px"
                 />
                 <Button
-                  @click="filtro"
+                  v-on:click="filtro"
                   color="#638695"
                   style="background-color: #6DAEC7;color: white;"
                 >Buscar</Button>
@@ -334,7 +334,7 @@ export default {
       filterActivos: false,
       filterInactivos: false,
       filterPendiente: false,
-      filtro_nombre: null,
+      filtro_nombre: "",
       objetoProducto: {
         id_producto: null,
         nombre: null,
@@ -351,14 +351,22 @@ export default {
   computed: {
     mostrarActivos() {
       if (this.filterActivos == true) {
-        return this.productos.filter((producto) => (producto.id_estado == 1));
-      } if (this.filterInactivos == true) {
-          return this.productos.filter((producto) => (producto.id_estado == 2));
-      }if (this.filterPendiente == true) {
-          return this.productos.filter((producto) => (producto.id_estado == 3));
-      }else {
+        return this.productos.filter((producto) => producto.id_estado == 1);
+      }
+      if (this.filterInactivos == true) {
+        return this.productos.filter((producto) => producto.id_estado == 2);
+      }
+      if (this.filterPendiente == true) {
+        return this.productos.filter((producto) => producto.id_estado == 3);
+      } else {
         return this.productos;
       }
+    },
+    filtroBuscar() {
+      return this.productos.filter(
+        (producto) =>
+          producto.nombre.toLowerCase() === this.filtro_nombre.toLowerCase()
+      );
     },
   },
   methods: {
