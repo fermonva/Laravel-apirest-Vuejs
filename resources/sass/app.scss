@@ -1,8 +1,16 @@
 // Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import url("https://fonts.googleapis.com/css?family=Nunito");
 
 // Variables
-@import 'variables';
+@import "variables";
 
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap/scss/bootstrap";
+
+// ViewUI
+@import "~view-design/dist/styles/iview.css";
+
+// Primevue
+@import "~primevue/resources/themes/bootstrap4-light-blue/theme.css";
+@import "~primevue/resources/primevue.min.css";
+@import "~primeicons/primeicons.css";

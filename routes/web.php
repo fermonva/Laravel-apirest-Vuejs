@@ -20,3 +20,6 @@ Route::prefix('productos')->group(function () {
     Route::post('editarProducto', 'ProductosController@editarProducto');
     Route::post('crearProducto', 'ProductosController@crearProducto');
 });
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

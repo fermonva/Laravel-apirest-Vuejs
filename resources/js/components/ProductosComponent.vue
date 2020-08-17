@@ -1,13 +1,13 @@
 <template>
   <div class="container">
-            <h1 class="display-3">ProductosComponent</h1>
+            <h1 class="display-3">ViewUI Component</h1>
     <div class="row justify-content-center">
       <div>
         <div class="card">
           <div class="card-body" style="width: 1080px;background-color: #F6F6F6;">
             <div>
               <div>
-                <strong>Gestión de Productos - Filtro de Buscador</strong>
+                <strong>Gestión de Productos</strong>
                 <Button
                   color="#638695"
                   style="float: right;background-color: #06C4BD;color: white;"

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-      <h1 class="display-3">ExampleComponent</h1>
+    <h1 class="display-3">BootStrap Component</h1>
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">
@@ -104,124 +104,11 @@
         >Un producto registrado.[productos activos:] - [Productos pendientes por activar:0] - [productos inactivos:0]</p>
       </div>
     </div>
-    <!-- mensaje -->
-    <h1 v-show="mensaje">{{mensajeAlReves}}</h1>
-    <input class="m-2" type="text" v-model="mensaje" />
-
-    <!-- dias -->
-    <li v-for="(dia, index) in dias" :key="index">{{ dia }}</li>
-    <input
-      class="m-2"
-      type="text"
-      placeholder="Escribe"
-      v-model="nuevoDia"
-      v-on:keyup.enter="agregar"
-    />
-    <button class="btn btn-danger" v-on:click="agregar">Agregar</button>
-    <br />
-
-    <!-- ordenar heroes -->
-    <li v-for="(heroe, index) in ordenarHeroes" :key="`A-${index}`">{{heroe}}</li>
-    <br />
-
-    <!-- Buscar heroe al escribir -->
-    <li v-for="(jugador, index) in buscarjugadores" :key="`B-${index}`">{{jugador}}</li>
-    <input type="search" v-model="busqueda" placeholder="Buscar jugador" />
-    <br>
-
-    <!-- imagenes api -->
-    <img
-      v-for="(usuario, index) in usuarios"
-      :key="`C-${index}`"
-      v-bind:src="usuario.picture.thumbnail"
-      :alt="usuario.name.first"
-    />
-
-    <!-- <pre class="fondo">{{$data}}</pre> -->
-    <br>
-
-    <misTareas></misTareas>
-
-
   </div>
 </template>
 
 <script>
-import misTareas from './TareasComponent.vue'
-export default {
-    components:{misTareas},
-  mounted() {
-    this.cargarPersonas();
-  },
-  data() {
-    return {
-      mensaje: "hola mundo",
-      nuevoDia: null,
-      dias: ["lunes", "martes", "miercoles", "jueves", "viernes"],
-      busqueda: "",
-      heroes: [
-        {
-          squadName: "Super hero squad",
-          homeTown: "Metro City",
-          formed: 2016,
-          secretBase: "Super tower",
-          active: true,
-        },
-        {
-          squadName: "Minimal Operator",
-          homeTown: "Metro maal",
-          formed: 2015,
-          secretBase: "Super",
-          active: true,
-        },
-      ],
-      jugadores: [
-        {
-          squadName: "Messi",
-          homeTown: "Metro City",
-          formed: 2016,
-          secretBase: "Super tower",
-          active: true,
-        },
-        {
-          squadName: "Cristiano",
-          homeTown: "Metro maal",
-          formed: 2015,
-          secretBase: "Super",
-          active: true,
-        },
-      ],
-      usuarios: [],
-    };
-  },
-  methods: {
-    agregar() {
-      this.dias.push(this.nuevoDia);
-      this.nuevoDia = null;
-    },
-    cargarPersonas() {
-      return axios
-        .get("https://randomuser.me/api/?results=100")
-        .then((response) => {
-          this.usuarios = response.data.results;
-        });
-    },
-  },
-  computed: {
-    mensajeAlReves() {
-      return this.mensaje.split("").reverse().join("");
-    },
-    ordenarHeroes() {
-      return this.heroes.sort((a, b) => b.formed + a.formed); // Javascript
-      //   return _.orderBy(this.heroes, ["formed"], ["asc"]); // lodash
-    },
-    buscarjugadores() {
-      return this.jugadores.filter((jugador) =>
-        jugador.squadName.toLowerCase().includes(this.busqueda.toLowerCase())
-      );
-    },
-  },
-};
+export default {};
 </script>
 <style>
 .btn-info {

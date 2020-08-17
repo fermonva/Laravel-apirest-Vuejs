@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Productos;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -148,7 +149,6 @@ class ProductosController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**
