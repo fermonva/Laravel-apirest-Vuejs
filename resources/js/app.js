@@ -17,6 +17,10 @@ import locale from "view-design/dist/locale/es-ES";
 Vue.use(ViewUI, { locale });
 
 
+// imortaciones de vuetify
+import Vuetify from "vuetify";
+Vue.use(Vuetify);
+
 
 // Registrar componentes vistas
 Vue.component(
@@ -36,11 +40,12 @@ Vue.component(
     require("./components/TareasComponent.vue").default
 );
 Vue.component(
-    "datatable_component",
-    require("./components/DatatableComponent.vue").default
+    "vuetify_component",
+    require("./components/VuetifyComponent.vue").default
 );
 
 const app = new Vue({
-    el: "#app"
+    el: "#app",
+    vuetify: new Vuetify(),
     // store
 });

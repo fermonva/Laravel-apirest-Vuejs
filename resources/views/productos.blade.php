@@ -8,8 +8,8 @@
     <br />
     <bootstrap_component></bootstrap_component>
     <br>
-    <datatable_component></datatable_component>
+    <vuetify_component></vuetify_component>
     <br>
-    <tareas_component></tareas_component>
+    {{-- <tareas_component></tareas_component> --}}
 </div>
 @endsection

@@ -6,4 +6,10 @@ export default class ProductoService {
             .post("productos/consultarDatos")
             .then(response => response.data.productos);
     }
+
+    editProductos() {
+        return axios
+            .post("productos/editarProducto")
+            .then(response => response.data.productos);
+    }
 }
