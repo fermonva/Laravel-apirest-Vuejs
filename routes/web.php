@@ -16,7 +16,8 @@ Route::get('/', function () {
 });
 
 Route::prefix('productos')->group(function () {
-    Route::post('consultarDatos', 'ProductosController@consultarDatos');
+    Route::post('consultarProductos', 'ProductosController@consultarProductos');
+    Route::post('consultarEstados', 'ProductosController@consultarEstados');
     Route::post('editarProducto', 'ProductosController@editarProducto');
     Route::post('crearProducto', 'ProductosController@crearProducto');
 });

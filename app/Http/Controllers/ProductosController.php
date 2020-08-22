@@ -12,7 +12,7 @@ class ProductosController extends Controller
 
 
 
-    public function consultarDatos()
+    public function consultarProductos()
     {
 
         //Consultar accesos de inicio se sesiÃ³n
@@ -20,11 +20,19 @@ class ProductosController extends Controller
                                 inner join estados e on p.id_estado = e.id_estado
                                 inner join  bodegas b on p.id_bodega = b.id_bodega");
 
+        //Respuesta positiva
+        return response()->json([
+            'productos' => $productos //Productos
+        ], 200);
+    }
+
+    public function consultarEstados()
+    {
         $estados = DB::select('SELECT  *  FROM estados e');
 
         //Respuesta positiva
         return response()->json([
-            'productos' => $productos, 'estados' => $estados //Perfiles
+            'estados' => $estados //Estados
         ], 200);
     }
 
@@ -93,7 +101,7 @@ class ProductosController extends Controller
             'existencia'  => 'required|integer',
             'bodega'      => 'nullable|string',
             'descripcion' => 'required|string',
-            'estado'      => 'required|integer',
+            'id_estado'      => 'required|integer',
         ]);
 
 
@@ -108,7 +116,7 @@ class ProductosController extends Controller
             $productos->existencia = $request->existencia;
             $productos->id_bodega = 1;
             $productos->descripcion = $request->descripcion;
-            $productos->id_estado = $request->estado;
+            $productos->id_estado = $request->id_estado;
 
 
             $productos->save();

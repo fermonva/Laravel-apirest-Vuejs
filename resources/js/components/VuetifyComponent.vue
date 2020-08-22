@@ -2,7 +2,7 @@
   <v-app>
     <v-container grid-list-xs>
       <h1 class="display-3">Vuetify Component</h1>
-      <v-data-table :headers="headers" :items="productos" sort-by="calories" class="elevation-1">
+      <v-data-table :headers="headers" :items="productos" sort-by="Nombre">
         <template v-slot:top>
           <v-toolbar flat color="white">
             <v-toolbar-title>Gestion de Productos</v-toolbar-title>
@@ -56,7 +56,7 @@
           <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
         </template>
         <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">Reset</v-btn>
+          <v-btn color="primary" @click="productos">Reset</v-btn>
         </template>
       </v-data-table>
     </v-container>
@@ -112,7 +112,6 @@ export default {
   },
 
   created() {
-    //   this.initialize()
     this.ProductoService = new ProductoService();
   },
   mounted() {

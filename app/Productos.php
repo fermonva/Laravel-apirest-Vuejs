@@ -12,4 +12,5 @@ class Productos extends Model
     protected $fillable = [
         'nombre', 'codigo', 'existencia', 'id_bodega', 'descripcion', 'id_estado'
     ];
+    public $timestamps = false;
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-            <h1 class="display-3">ViewUI Component</h1>
+    <h1 class="display-3">ViewUI Component</h1>
     <div class="row justify-content-center">
       <div>
         <div class="card">
@@ -12,6 +12,7 @@
                   color="#638695"
                   style="float: right;background-color: #06C4BD;color: white;"
                   shape="circle"
+                  @click="modalCrearProducto=true"
                 >Crear producto</Button>
               </div>
               <br />
@@ -63,6 +64,41 @@
                 style="background-color: #017AAF;color: white;"
               >Un producto registrado.[productos activos:] - [Productos pendientes por activar:0] - [productos inactivos:0]</p>
             </div>
+            <!-- Modal iview ui -->
+            <Modal v-model="modalCrearProducto" title="Agregar Producto">
+              <Form ref="formValidate" :model="objetoProducto" :label-width="80">
+                <FormItem label="Nombre" prop="name">
+                  <Input v-model="objetoProducto.nombre" placeholder="Ingrese el nombre" />
+                </FormItem>
+                <FormItem label="Código" prop="name">
+                  <Input v-model="objetoProducto.codigo" placeholder="Ingrese el código" />
+                </FormItem>
+                <FormItem label="Existencia" prop="name">
+                  <Input v-model="objetoProducto.existencia" placeholder="Ingrese la existencia" />
+                </FormItem>
+                <FormItem label="Bodega" prop="name">
+                  <Input v-model="objetoProducto.bodega" placeholder="Ingrese la bodega" />
+                </FormItem>
+                <FormItem label="Descripción" prop="name">
+                  <Input v-model="objetoProducto.descripcion" placeholder="Ingrese la descripción" />
+                </FormItem>
+
+                <FormItem label="Estado">
+                  <Select v-model="objetoProducto.id_estado">
+                    <Option
+                      v-for="option in estados"
+                      :value="option.id_estado"
+                      :key="option.id_estado"
+                    >{{ option.nombre }}</Option>
+                  </Select>
+                </FormItem>
+              </Form>
+
+              <div slot="footer">
+                <Button type="error" @click="modalCrearProducto=false">Cancelar</Button>
+                <Button type="success" @click="CrearProducto, modalCrearProducto = false;">Guardar</Button>
+              </div>
+            </Modal>
 
             <!-- Modal Editar -->
             <div
@@ -279,14 +315,8 @@ export default {
     this.ProductoService = new ProductoService();
   },
   mounted() {
-    this.loading = true;
-    this.ProductoService.getProductos().then(
-      (productos) => (
-        (this.productos = productos), (this.productosbuscar = this.productos)
-      )
-    );
-
-    this.loading = false;
+    this.consultarProductos();
+    this.consultarEstados();
   },
   data() {
     return {
@@ -346,6 +376,7 @@ export default {
         estado: null,
       },
       estados: [],
+      modalCrearProducto: false,
     };
   },
   computed: {
@@ -391,13 +422,19 @@ export default {
         });
       }
     },
+    consultarProductos() {
+      this.loading = true;
+      this.ProductoService.getProductos().then(
+        (productos) => (
+          (this.productos = productos), (this.productosbuscar = this.productos)
+        )
+      );
+      this.loading = false;
+    },
     consultarEstados(param) {
-      axios
-        .post("productos/consultarDatos", {})
-        .then((response) => {
-          this.estados = response.data.estados;
-        })
-        .catch((error) => {});
+      this.ProductoService.getEstados().then(
+        (estados) => (this.estados = estados)
+      );
     },
     asignarEstado(parametro) {
       this.objetoProducto.id_producto = parametro.id_producto;
@@ -407,7 +444,6 @@ export default {
       this.objetoProducto.bodega = parametro.bodega;
       this.objetoProducto.descripcion = parametro.descripcion;
       this.objetoProducto.id_estado = parametro.id_estado;
-      $("#editarModal").modal("show");
     },
     editarProducto() {
       axios
@@ -421,24 +457,14 @@ export default {
           id_estado: this.objetoProducto.id_estado,
         })
         .then((response) => {
-          $("#editarModal").modal("hide");
-          return response.data.msg;
-        })
-        .then((response) => {
-          this.consultarDatos();
+          //   this.consultarDatos();
           return response;
-        })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            title: response,
-          });
         })
 
         .catch((error) => {});
     },
 
-    crearProducto() {
+    CrearProducto() {
       axios
         .post("productos/crearProducto", {
           nombre: this.objetoProducto.nombre,
@@ -449,18 +475,8 @@ export default {
           id_estado: this.objetoProducto.id_estado,
         })
         .then((response) => {
-          $("#crearModal").modal("hide");
           return response.data.msg;
-        })
-        .then((response) => {
-          this.consultarDatos();
-          return response;
-        })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            title: response,
-          });
+          this.consultarProductos();
         })
         .catch((error) => {});
     },
