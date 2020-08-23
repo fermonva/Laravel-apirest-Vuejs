@@ -45,13 +45,14 @@
                 </CheckboxGroup>
               </div>
 
+              <!-- INICIO TABLA DATA -->
               <Table stripe :loading="loading" :columns="column" :data="mostrarActivos">
                 <template slot-scope="{ row }" slot="nombre">
                   <Icon type="md-checkmark-circle" style="width: 30px;" size="24" color="#06C4BD" />
                   {{ row.nombre }}
                 </template>
                 <template slot-scope="{ index }" slot="action">
-                  <Icon type="md-create" color="#638695" size="24" @click="show(index)" />
+                  <Icon type="md-create" color="#638695" size="24" @click="asignarProducto(index)" />
                   <!-- <Button type="error" size="small" @click="remove(index)">Delete</Button> -->
                 </template>
 
@@ -59,12 +60,12 @@
                   <p style="background-color:#00CF00;">{{row.estado}}</p>
                 </template>
               </Table>
-
               <p
                 style="background-color: #017AAF;color: white;"
               >Un producto registrado.[productos activos:] - [Productos pendientes por activar:0] - [productos inactivos:0]</p>
             </div>
-            <!-- Modal iview ui -->
+
+            <!-- MODAL CREAR PRODUCTO -->
             <Modal v-model="modalCrearProducto" title="Agregar Producto">
               <Form ref="formValidate" :model="objetoProducto" :label-width="80">
                 <FormItem label="Nombre" prop="name">
@@ -96,208 +97,45 @@
 
               <div slot="footer">
                 <Button type="error" @click="modalCrearProducto=false">Cancelar</Button>
-                <Button type="success" @click="CrearProducto, modalCrearProducto = false;">Guardar</Button>
+                <Button type="primary" @click="crearProducto(), modalCrearProducto=false;">Guardar</Button>
               </div>
             </Modal>
 
-            <!-- Modal Editar -->
-            <div
-              class="modal fade"
-              id="editarModal"
-              tabindex="-1"
-              role="dialog"
-              aria-labelledby="editarModalLabel"
-              aria-hidden="true"
-            >
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="editarModalLabel">Producto</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <form @submit.prevent="confirmarEditar">
-                      <div class="form-group">
-                        <label for="InputNombre">Nombre</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-model="objetoProducto.nombre"
-                          aria-describedby="Nombre Producto"
-                          required
-                        />
-                      </div>
+            <!-- MODAL EDITAR PRODUCTO -->
+            <Modal v-model="modalEditarProducto" title="Editar Producto">
+              <Form ref="formValidate" :model="objetoProducto" :label-width="80">
+                <FormItem label="Nombre" prop="name">
+                  <Input v-model="objetoProducto.nombre" placeholder="Ingrese el nombre" />
+                </FormItem>
+                <FormItem label="Código" prop="name">
+                  <Input v-model="objetoProducto.codigo" placeholder="Ingrese el código" />
+                </FormItem>
+                <FormItem label="Existencia" prop="name">
+                  <Input v-model="objetoProducto.existencia" placeholder="Ingrese la existencia" />
+                </FormItem>
+                <FormItem label="Bodega" prop="name">
+                  <Input v-model="objetoProducto.bodega" placeholder="Ingrese la bodega" />
+                </FormItem>
+                <FormItem label="Descripción" prop="name">
+                  <Input v-model="objetoProducto.descripcion" placeholder="Ingrese la descripción" />
+                </FormItem>
 
-                      <div class="form-group">
-                        <label for="InputNombre">Código</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-model="objetoProducto.codigo"
-                          aria-describedby="Codigo Producto"
-                          required
-                        />
-                      </div>
+                <FormItem label="Estado">
+                  <Select v-model="objetoProducto.id_estado">
+                    <Option
+                      v-for="option in estados"
+                      :value="option.id_estado"
+                      :key="option.id_estado"
+                    >{{ option.nombre }}</Option>
+                  </Select>
+                </FormItem>
+              </Form>
 
-                      <div class="form-group">
-                        <label for="InputNombre">Existencia</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-model="objetoProducto.existencia"
-                          aria-describedby="Existencia Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Bodega</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-model="objetoProducto.bodega"
-                          aria-describedby="Bodega Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Descripción</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-model="objetoProducto.descripcion"
-                          aria-describedby="Descripción Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Estado</label>
-
-                        <select class="form-control" v-model="objetoProducto.estado">
-                          <option :selected="true" value>-- Seleccione --</option>
-                          <option
-                            v-for="(option,index) in estados"
-                            v-bind:value="option.id_estado"
-                            v-bind:key="index"
-                          >{{ option.nombre }}</option>
-                        </select>
-                      </div>
-
-                      <button type="submit" class="btn btn-success">Actualizar</button>
-                    </form>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                  </div>
-                </div>
+              <div slot="footer">
+                <Button type="error" @click="modalEditarProducto=false">Cancelar</Button>
+                <Button type="primary" @click="editarProducto(), modalEditarProducto=false;">Guardar</Button>
               </div>
-            </div>
-
-            <!-- Modal Crear producto -->
-            <div
-              class="modal fade"
-              id="crearModal"
-              tabindex="-1"
-              role="dialog"
-              aria-labelledby="crearModalLabel"
-              aria-hidden="true"
-            >
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="crearModalLabel">Producto</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <form @submit.prevent="crearProducto">
-                      <div class="form-group">
-                        <label for="InputNombre">Nombre</label>
-                        <input
-                          v-model="objetoProducto.nombre"
-                          type="text"
-                          class="form-control"
-                          aria-describedby="Nombre Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Código</label>
-                        <input
-                          v-model="objetoProducto.codigo"
-                          type="text"
-                          class="form-control"
-                          aria-describedby="Codigo Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Existencia</label>
-                        <input
-                          v-model="objetoProducto.existencia"
-                          type="text"
-                          class="form-control"
-                          aria-describedby="Existencia Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Bodega</label>
-                        <input
-                          v-model="objetoProducto.bodega"
-                          type="text"
-                          class="form-control"
-                          aria-describedby="Bodega Producto"
-                          placeholder="Centro"
-                          required
-                          disabled
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Descripción</label>
-                        <input
-                          v-model="objetoProducto.descripcion"
-                          type="text"
-                          class="form-control"
-                          aria-describedby="Descripción Producto"
-                          required
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="InputNombre">Estado</label>
-
-                        <select name="cars" class="custom-select" v-model="objetoProducto.estado">
-                          <option selected>Seleccione un estado</option>
-                          <option
-                            v-for="(option,index) in estados"
-                            v-bind:value="option.id_estado"
-                            v-bind:key="index"
-                          >{{ option.nombre }}</option>
-                        </select>
-                      </div>
-
-                      <button type="submit" class="btn btn-success">Guardar</button>
-                    </form>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Termina modal crearProducto -->
-
+            </Modal>
             <br />
           </div>
         </div>
@@ -324,59 +162,60 @@ export default {
       column: [
         {
           title: "Nombre del producto",
-          key: "nombre",
-          slot: "nombre",
+          key  : "nombre",
+          slot : "nombre",
           width: 200,
         },
         {
           title: "Código",
-          key: "codigo",
+          key  : "codigo",
         },
         {
           title: "Existencia",
-          key: "existencia",
+          key  : "existencia",
           align: "center",
           width: 150,
         },
         {
           title: "Bodega",
-          key: "bodega",
+          key  : "bodega",
         },
         {
           title: "Descripción",
-          key: "descripcion",
+          key  : "descripcion",
           width: 150,
         },
         {
           title: "Editar",
-          slot: "action",
+          slot : "action",
           align: "center",
         },
         {
           title: "Estado",
-          key: "estado",
+          key  : "estado",
           align: "center",
-          slot: "estado",
+          slot : "estado",
         },
       ],
       productosbuscar: [],
-      productos: [],
-      filterActivos: false,
+      productos      : [],
+      filterActivos  : false,
       filterInactivos: false,
       filterPendiente: false,
-      filtro_nombre: "",
-      objetoProducto: {
+      filtro_nombre  : "",
+      objetoProducto : {
         id_producto: null,
-        nombre: null,
-        codigo: null,
-        existencia: null,
-        bodega: null,
+        nombre     : null,
+        codigo     : null,
+        existencia : null,
+        bodega     : null,
         descripcion: null,
-        id_estado: null,
-        estado: null,
+        id_estado  : null,
+        estado     : null,
       },
-      estados: [],
-      modalCrearProducto: false,
+      estados            : [],
+      modalCrearProducto : false,
+      modalEditarProducto: false,
     };
   },
   computed: {
@@ -393,23 +232,14 @@ export default {
         return this.productos;
       }
     },
-    filtroBuscar() {
-      return this.productos.filter(
-        (producto) =>
-          producto.nombre.toLowerCase() === this.filtro_nombre.toLowerCase()
-      );
-    },
+    // filtroBuscar() {
+    //   return this.productos.filter(
+    //     (producto) =>
+    //       producto.nombre.toLowerCase() === this.filtro_nombre.toLowerCase()
+    //   );
+    // },
   },
   methods: {
-    show(index) {
-      this.$Modal.info({
-        title: "Producto",
-        content: `Nombre：${this.productos[index].nombre}<br>Código：${this.productos[index].codigo}<br>Existencia：${this.productos[index].existencia}<br>Bodega：${this.productos[index].bodega}<br>Descripción：${this.productos[index].descripcion}<br>Estado:${this.productos[index].id_estado}`,
-      });
-    },
-    // remove(index) {
-    //   this.productos.splice(index, 1);
-    // },
     filtro() {
       if (this.filtro_nombre === "") {
         this.productos = this.productosbuscar;
@@ -436,50 +266,49 @@ export default {
         (estados) => (this.estados = estados)
       );
     },
-    asignarEstado(parametro) {
-      this.objetoProducto.id_producto = parametro.id_producto;
-      this.objetoProducto.nombre = parametro.nombre;
-      this.objetoProducto.codigo = parametro.codigo;
-      this.objetoProducto.existencia = parametro.existencia;
-      this.objetoProducto.bodega = parametro.bodega;
-      this.objetoProducto.descripcion = parametro.descripcion;
-      this.objetoProducto.id_estado = parametro.id_estado;
+    crearProducto() {
+      this.ProductoService.addProducto({
+        nombre     : this.objetoProducto.nombre,
+        codigo     : this.objetoProducto.codigo,
+        existencia : this.objetoProducto.existencia,
+        bodega     : this.objetoProducto.bodega,
+        descripcion: this.objetoProducto.descripcion,
+        id_estado  : this.objetoProducto.id_estado,
+      });
+      this.consultarProductos();
+      this.limpiarCampos();
+    },
+    asignarProducto(index) {
+      this.objetoProducto.id_producto = this.productos[index].id_producto;
+      this.objetoProducto.nombre      = this.productos[index].nombre;
+      this.objetoProducto.codigo      = this.productos[index].codigo;
+      this.objetoProducto.existencia  = this.productos[index].existencia;
+      this.objetoProducto.bodega      = this.productos[index].bodega;
+      this.objetoProducto.descripcion = this.productos[index].descripcion;
+      this.objetoProducto.id_estado   = this.productos[index].id_estado;
+      this.modalEditarProducto        = true;
     },
     editarProducto() {
-      axios
-        .post("productos/editarProducto", {
+        this.ProductoService.editProducto({
           id_producto: this.objetoProducto.id_producto,
-          nombre: this.objetoProducto.nombre,
-          codigo: this.objetoProducto.codigo,
-          existencia: this.objetoProducto.existencia,
-          bodega: this.objetoProducto.bodega,
+          nombre     : this.objetoProducto.nombre,
+          codigo     : this.objetoProducto.codigo,
+          existencia : this.objetoProducto.existencia,
+          bodega     : this.objetoProducto.bodega,
           descripcion: this.objetoProducto.descripcion,
-          id_estado: this.objetoProducto.id_estado,
+          id_estado  : this.objetoProducto.id_estado,
         })
         .then((response) => {
-          //   this.consultarDatos();
+          this.consultarProductos();
+          this.limpiarCampos();
           return response;
         })
 
         .catch((error) => {});
     },
-
-    CrearProducto() {
-      axios
-        .post("productos/crearProducto", {
-          nombre: this.objetoProducto.nombre,
-          codigo: this.objetoProducto.codigo,
-          existencia: this.objetoProducto.existencia,
-          bodega: this.objetoProducto.bodega,
-          descripcion: this.objetoProducto.descripcion,
-          id_estado: this.objetoProducto.id_estado,
-        })
-        .then((response) => {
-          return response.data.msg;
-          this.consultarProductos();
-        })
-        .catch((error) => {});
-    },
+    // remove(index) {
+    //   this.productos.splice(index, 1);
+    // },
 
     limpiarCampos() {
       this.objetoProducto.id_producto = null;

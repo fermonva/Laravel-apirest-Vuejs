@@ -13,9 +13,15 @@ export default class ProductoService {
             .then(response => response.data.estados);
     }
 
-    editProductos() {
+    addProducto(data) {
         return axios
-            .post("productos/editarProducto")
-            .then(response => response.data.productos);
+            .post("productos/crearProducto", data)
+            .then(response => response.data.msg);
+    }
+
+    editProducto(data) {
+        return axios
+            .post("productos/editarProducto", data)
+            .then(response => response.data.msg);
     }
 }

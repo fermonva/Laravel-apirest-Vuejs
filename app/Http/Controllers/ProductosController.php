@@ -48,7 +48,7 @@ class ProductosController extends Controller
             'existencia'  => 'required|integer',
             'bodega'      => 'nullable|string',
             'descripcion' => 'required|string',
-            'estado'      => 'required|integer',
+            'id_estado'   => 'required|integer',
         ]);
 
 
@@ -63,7 +63,7 @@ class ProductosController extends Controller
             $productos->existencia = $request->existencia;
             $productos->id_bodega = 1;
             $productos->descripcion = $request->descripcion;
-            $productos->id_estado = $request->estado;
+            $productos->id_estado = $request->id_estado;
 
             $productos->save();
 
@@ -101,7 +101,7 @@ class ProductosController extends Controller
             'existencia'  => 'required|integer',
             'bodega'      => 'nullable|string',
             'descripcion' => 'required|string',
-            'id_estado'      => 'required|integer',
+            'id_estado'   => 'required|integer',
         ]);
 
 
