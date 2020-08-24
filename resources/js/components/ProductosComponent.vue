@@ -21,13 +21,13 @@
                 <label>Nombre del producto</label>
                 <Input
                   type="text"
-                  @on-enter="filtro"
+                  @on-enter="filtroBuscar"
                   v-model="filtro_nombre"
                   placeholder="Ingrese su busqueda..."
                   style="width: 200px"
                 />
                 <Button
-                  v-on:click="filtro"
+                  v-on:click="filtroBuscar"
                   color="#638695"
                   style="background-color: #6DAEC7;color: white;"
                 >Buscar</Button>
@@ -46,7 +46,7 @@
               </div>
 
               <!-- INICIO TABLA DATA -->
-              <Table stripe :loading="loading" :columns="column" :data="mostrarActivos">
+              <Table stripe :loading="loading" :columns="column" :data="filtrosCheck">
                 <template slot-scope="{ row }" slot="nombre">
                   <Icon type="md-checkmark-circle" style="width: 30px;" size="24" color="#06C4BD" />
                   {{ row.nombre }}
@@ -62,7 +62,7 @@
               </Table>
               <p
                 style="background-color: #017AAF;color: white;"
-              >Un producto registrado.[productos activos:] - [Productos pendientes por activar:0] - [productos inactivos:0]</p>
+              >Un producto registrado.[productos activos:{{contarActivos}}] - [Productos pendientes por activar:{{contarPendientes}}] - [productos inactivos:{{contarInactivos}}]</p>
             </div>
 
             <!-- MODAL CREAR PRODUCTO -->
@@ -162,85 +162,103 @@ export default {
       column: [
         {
           title: "Nombre del producto",
-          key  : "nombre",
-          slot : "nombre",
+          key: "nombre",
+          slot: "nombre",
           width: 200,
         },
         {
           title: "Código",
-          key  : "codigo",
+          key: "codigo",
         },
         {
           title: "Existencia",
-          key  : "existencia",
+          key: "existencia",
           align: "center",
           width: 150,
         },
         {
           title: "Bodega",
-          key  : "bodega",
+          key: "bodega",
         },
         {
           title: "Descripción",
-          key  : "descripcion",
+          key: "descripcion",
           width: 150,
         },
         {
           title: "Editar",
-          slot : "action",
+          slot: "action",
           align: "center",
         },
         {
           title: "Estado",
-          key  : "estado",
+          key: "estado",
           align: "center",
-          slot : "estado",
+          slot: "estado",
         },
       ],
       productosbuscar: [],
-      productos      : [],
-      filterActivos  : false,
+      productos: [],
+      filterActivos: false,
       filterInactivos: false,
       filterPendiente: false,
-      filtro_nombre  : "",
-      objetoProducto : {
+      filtro_nombre: "",
+      objetoProducto: {
         id_producto: null,
-        nombre     : null,
-        codigo     : null,
-        existencia : null,
-        bodega     : null,
+        nombre: null,
+        codigo: null,
+        existencia: null,
+        bodega: null,
         descripcion: null,
-        id_estado  : null,
-        estado     : null,
+        id_estado: null,
+        estado: null,
       },
-      estados            : [],
-      modalCrearProducto : false,
+      estados: [],
+      modalCrearProducto: false,
       modalEditarProducto: false,
     };
   },
   computed: {
-    mostrarActivos() {
+    filtrosCheck() {
       if (this.filterActivos == true) {
+        this.filterInactivos;
+        this.filterPendiente;
         return this.productos.filter((producto) => producto.id_estado == 1);
       }
       if (this.filterInactivos == true) {
+        this.filterActivos;
+        this.filterPendiente;
         return this.productos.filter((producto) => producto.id_estado == 2);
       }
       if (this.filterPendiente == true) {
+        this.filterInactivos;
+        this.filterActivos;
         return this.productos.filter((producto) => producto.id_estado == 3);
       } else {
         return this.productos;
       }
     },
-    // filtroBuscar() {
-    //   return this.productos.filter(
-    //     (producto) =>
-    //       producto.nombre.toLowerCase() === this.filtro_nombre.toLowerCase()
-    //   );
-    // },
+    contarActivos() {
+      const activos = this.productos.filter(
+        (producto) => producto.id_estado == 1
+      );
+      return activos.length;
+    },
+    contarInactivos() {
+      const inactivos = this.productos.filter(
+        (producto) => producto.id_estado == 2
+      );
+      return inactivos.length;
+    },
+    contarPendientes() {
+      const pendientes = this.productos.filter(
+        (producto) => producto.id_estado == 3
+      );
+      return pendientes.length;
+    },
   },
   methods: {
-    filtro() {
+    filtroBuscar() {
       if (this.filtro_nombre === "") {
         this.productos = this.productosbuscar;
       } else {
@@ -268,36 +286,36 @@ export default {
     },
     crearProducto() {
       this.ProductoService.addProducto({
-        nombre     : this.objetoProducto.nombre,
-        codigo     : this.objetoProducto.codigo,
-        existencia : this.objetoProducto.existencia,
-        bodega     : this.objetoProducto.bodega,
+        nombre: this.objetoProducto.nombre,
+        codigo: this.objetoProducto.codigo,
+        existencia: this.objetoProducto.existencia,
+        bodega: this.objetoProducto.bodega,
         descripcion: this.objetoProducto.descripcion,
-        id_estado  : this.objetoProducto.id_estado,
+        id_estado: this.objetoProducto.id_estado,
       });
       this.consultarProductos();
       this.limpiarCampos();
     },
     asignarProducto(index) {
       this.objetoProducto.id_producto = this.productos[index].id_producto;
-      this.objetoProducto.nombre      = this.productos[index].nombre;
-      this.objetoProducto.codigo      = this.productos[index].codigo;
-      this.objetoProducto.existencia  = this.productos[index].existencia;
-      this.objetoProducto.bodega      = this.productos[index].bodega;
+      this.objetoProducto.nombre = this.productos[index].nombre;
+      this.objetoProducto.codigo = this.productos[index].codigo;
+      this.objetoProducto.existencia = this.productos[index].existencia;
+      this.objetoProducto.bodega = this.productos[index].bodega;
       this.objetoProducto.descripcion = this.productos[index].descripcion;
-      this.objetoProducto.id_estado   = this.productos[index].id_estado;
-      this.modalEditarProducto        = true;
+      this.objetoProducto.id_estado = this.productos[index].id_estado;
+      this.modalEditarProducto = true;
     },
     editarProducto() {
-        this.ProductoService.editProducto({
-          id_producto: this.objetoProducto.id_producto,
-          nombre     : this.objetoProducto.nombre,
-          codigo     : this.objetoProducto.codigo,
-          existencia : this.objetoProducto.existencia,
-          bodega     : this.objetoProducto.bodega,
-          descripcion: this.objetoProducto.descripcion,
-          id_estado  : this.objetoProducto.id_estado,
-        })
+      this.ProductoService.editProducto({
+        id_producto: this.objetoProducto.id_producto,
+        nombre: this.objetoProducto.nombre,
+        codigo: this.objetoProducto.codigo,
+        existencia: this.objetoProducto.existencia,
+        bodega: this.objetoProducto.bodega,
+        descripcion: this.objetoProducto.descripcion,
+        id_estado: this.objetoProducto.id_estado,
+      })
         .then((response) => {
           this.consultarProductos();
           this.limpiarCampos();
@@ -306,10 +324,6 @@ export default {
 
         .catch((error) => {});
     },
-    // remove(index) {
-    //   this.productos.splice(index, 1);
-    // },
-
     limpiarCampos() {
       this.objetoProducto.id_producto = null;
       this.objetoProducto.nombre = null;
