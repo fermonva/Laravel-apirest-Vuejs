@@ -1,50 +1,72 @@
 <template>
   <div class="container">
     <h1 class="display-3">PrimeVue Component</h1>
-    <!-- Inicio Data Table -->
-    <DataTable
-      :value="productos"
-      class="p-datatable-striped"
-      :paginator="true"
-      :rows="5"
-      paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-      :rowsPerPageOptions="[10,20,50]"
-      currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-      :selection.sync="selectedProductos"
-      data-key="id"
-      :filters="filters"
-    >
-      <template #header>
-        <div class="table-header">
-          Gestión de Productos
-          <span class="p-input-icon-left">
-            <i class="pi pi-search" />
-            <InputText v-model="filters['global']" placeholder="Global Search" />
-          </span>
-        </div>
-      </template>
-      <Column field="nombre" header="Nombre del producto"></Column>
-      <Column field="codigo" header="Código"></Column>
-      <Column field="existencia" header="Existencia"></Column>
-      <Column field="bodega" header="Bodega"></Column>
-      <Column field="descripcion" header="Descripción"></Column>
-      <Column header="Editar">
-        <template #body="slotProps">
-          <Button
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button-success p-mr-2"
-            @click="editProducto(slotProps.data)"
-          />
-        </template>
-      </Column>
-      <Column field="estado" header="Estado"></Column>
-    </DataTable>
-    <!-- Fin Data Table -->
 
-    <!-- Inicio Modal -->
+    <div class="card" style="width: 1080px;background-color: #F6F6F6;">
+      <div class="card-body">
+        <div>
+          <div>
+            <strong>Gestión de Productos</strong>
+            <Button
+              label="Crear producto"
+              class="p-button-success p-button-rounded p-button-sm"
+              style="float: right;"
+              @click="openNew()"
+            />
+          </div>
+          <br />
+          <div>
+            <label>Nombre del producto</label>
+            <Input
+              type="text"
+              @on-enter="filtroBuscar"
+              v-model="filtro_nombre"
+              placeholder="Ingrese su busqueda..."
+              style="width: 200px"
+            />
+            <Button class="p-button-info p-button-sm" v-on:click="filtroBuscar">Buscar</Button>
+
+            <CheckboxGroup style="float: right;" class="mt-2">
+              <Checkbox></Checkbox>
+              <span>Mostrar todos</span>
+              <Checkbox v-model="filterActivos" :binary="true"></Checkbox>
+              <span>Activos</span>
+              <Checkbox v-model="filterInactivos" :binary="true"></Checkbox>
+              <span>Inactivos</span>
+              <Checkbox v-model="filterPendiente" :binary="true"></Checkbox>
+              <span>Pendiente</span>
+            </CheckboxGroup>
+          </div>
+
+          <br />
+
+          <!-- INICIO DATATABLE -->
+          <DataTable :value="filtrosCheck" class="p-datatable-sm" :paginator="true" :rows="10">
+            <Column field="nombre" header="Nombre del producto"></Column>
+            <Column field="codigo" header="Código"></Column>
+            <Column field="existencia" header="Existencia"></Column>
+            <Column field="bodega" header="Bodega"></Column>
+            <Column field="descripcion" header="Descripción"></Column>
+            <Column header="Editar">
+              <template #body="slotProps">
+                <Button
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-success p-mr-2"
+                  @click="editProducto(slotProps.data)"
+                />
+              </template>
+            </Column>
+            <Column field="estado" header="Estado"></Column>
+          </DataTable>
+          <!-- FIN DATATABLE -->
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL CREAR PRODUCTO -->
     <Dialog
       :visible.sync="productoDialog"
-      :style="{width: '450px'}"
+      :style="{width: '50vw'}"
       header="producto"
       :modal="true"
       class="p-fluid"
@@ -53,12 +75,12 @@
         <label for="nombre">Nombre del Producto</label>
         <InputText
           id="nombre"
-          v-model.trim="producto.nombre"
+          v-model.trim="objetoProducto.nombre"
           required="true"
           autofocus
-          :class="{'p-invalid': submitted && !producto.nombre}"
+          :class="{'p-invalid': submitted && !objetoProducto.nombre}"
         />
-        <small class="p-invalid" v-if="submitted && !producto.nombre">Name is required.</small>
+        <small class="p-invalid" v-if="submitted && !objetoProducto.nombre">Name is required.</small>
       </div>
       <br />
 
@@ -66,11 +88,11 @@
         <label for="codigo">Código</label>
         <InputText
           id="codigo"
-          v-model.trim="producto.codigo"
+          v-model.trim="objetoProducto.codigo"
           required="true"
-          :class="{'p-invalid': submitted && !producto.codigo}"
+          :class="{'p-invalid': submitted && !objetoProducto.codigo}"
         />
-        <small class="p-invalid" v-if="submitted && !producto.codigo">Código is required.</small>
+        <small class="p-invalid" v-if="submitted && !objetoProducto.codigo">Código is required.</small>
       </div>
       <br />
 
@@ -78,11 +100,14 @@
         <label for="existencia">Existencia</label>
         <InputText
           id="existencia"
-          v-model.trim="producto.existencia"
+          v-model.trim="objetoProducto.existencia"
           required="true"
-          :class="{'p-invalid': submitted && !producto.existencia}"
+          :class="{'p-invalid': submitted && !objetoProducto.existencia}"
         />
-        <small class="p-invalid" v-if="submitted && !producto.existencia">Existencia is required.</small>
+        <small
+          class="p-invalid"
+          v-if="submitted && !objetoProducto.existencia"
+        >Existencia is required.</small>
       </div>
       <br />
 
@@ -90,11 +115,11 @@
         <label for="bodega">Bodega</label>
         <InputText
           id="bodega"
-          v-model.trim="producto.bodega"
+          v-model.trim="objetoProducto.bodega"
           required="true"
-          :class="{'p-invalid': submitted && !producto.bodega}"
+          :class="{'p-invalid': submitted && !objetoProducto.bodega}"
         />
-        <small class="p-invalid" v-if="submitted && !producto.bodega">Bodega is required.</small>
+        <small class="p-invalid" v-if="submitted && !objetoProducto.bodega">Bodega is required.</small>
       </div>
       <br />
 
@@ -102,23 +127,28 @@
         <label for="descripcion">Descripción</label>
         <InputText
           id="descripcion"
-          v-model.trim="producto.descripcion"
+          v-model.trim="objetoProducto.descripcion"
           required="true"
-          :class="{'p-invalid': submitted && !producto.descripcion}"
+          :class="{'p-invalid': submitted && !objetoProducto.descripcion}"
         />
-        <small class="p-invalid" v-if="submitted && !producto.descripcion">Descripción is required.</small>
+        <small
+          class="p-invalid"
+          v-if="submitted && !objetoProducto.descripcion"
+        >Descripción is required.</small>
       </div>
       <br />
 
       <div class="p-field">
         <label for="estado">Estado</label>
-        <InputText
-          id="estado"
-          v-model.trim="producto.estado"
-          required="true"
-          :class="{'p-invalid': submitted && !producto.estado}"
+        <Dropdown
+          v-model.trim="objetoProducto.id_estado"
+          :options="estados"
+          optionValue="id_estado"
+          optionLabel="nombre"
+          :editable="true"
         />
-        <small class="p-invalid" v-if="submitted && !producto.estado">Estado is required.</small>
+
+        <small class="p-invalid" v-if="submitted && !objetoProducto.estado">Estado is required.</small>
       </div>
 
       <template #footer>
@@ -136,13 +166,18 @@ import ProductoService from "../services/ProductoService";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import InputText from "primevue/inputtext";
+import Checkbox from "primevue/checkbox";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
+import Dropdown from "primevue/dropdown";
+
 export default {
   components: {
     DataTable,
+    Dropdown,
     Column,
     InputText,
+    Checkbox,
     Button,
     Dialog,
   },
@@ -150,25 +185,75 @@ export default {
     this.ProductoService = new ProductoService();
   },
   mounted() {
-    this.ProductoService.getProductos().then(
-      (productos) => (
-        (this.productos = productos), (this.productosbuscar = this.productos)
-      )
-    );
+    this.consultarProductos();
+    this.consultarEstados();
   },
   data() {
     return {
+      filtro_nombre: null,
       productos: [],
       productoDialog: false,
-      selectedProductos: null,
-      producto: {},
-      filters: {},
+      objetoProducto: {
+        id_producto: null,
+        nombre: null,
+        codigo: null,
+        existencia: null,
+        bodega: null,
+        descripcion: null,
+        id_estado: null,
+        estado: null,
+      },
       submitted: false,
+      estados: {},
+      filterActivos: false,
+      filterInactivos: false,
+      filterPendiente: false,
     };
   },
+  computed: {
+    filtrosCheck() {
+      if (this.filterActivos === true) {
+        return this.productos.filter((producto) => producto.id_estado == 1);
+      }
+      if (this.filterInactivos == true) {
+        return this.productos.filter((producto) => producto.id_estado == 2);
+      }
+      if (this.filterPendiente == true) {
+        return this.productos.filter((producto) => producto.id_estado == 3);
+      } else {
+        return this.productos;
+      }
+    },
+  },
   methods: {
+    consultarProductos() {
+      this.loading = true;
+      this.ProductoService.getProductos().then(
+        (productos) => (
+          (this.productos = productos), (this.productosbuscar = this.productos)
+        )
+      );
+      this.loading = false;
+    },
+    consultarEstados() {
+      this.ProductoService.getEstados().then(
+        (estados) => (this.estados = estados)
+      );
+    },
+        filtroBuscar() {
+      if (this.filtro_nombre === "") {
+        this.productos = this.productosbuscar;
+      } else {
+        this.productos = this.productosbuscar;
+        this.productos = this.productos.filter((producto) => {
+          return (
+            producto.nombre.toLowerCase() === this.filtro_nombre.toLowerCase()
+          );
+        });
+      }
+    },
     openNew() {
-      this.producto = {};
+      this.objetoProducto = {};
       this.submitted = false;
       this.productoDialog = true;
     },
@@ -177,7 +262,7 @@ export default {
       this.submitted = false;
     },
     editProducto(producto) {
-      this.producto = { ...producto };
+      this.objetoProducto = { ...producto };
       this.productoDialog = true;
     },
     confirmDeleteProducto(producto) {
@@ -187,33 +272,29 @@ export default {
     saveProducto() {
       this.submitted = true;
 
-      if (this.producto.name.trim()) {
-        if (this.producto.id) {
-          this.$set(
-            this.productos,
-            this.findIndexById(this.producto.id),
-            this.producto
-          );
-          this.$toast.add({
-            severity: "success",
-            summary: "Successful",
-            detail: "Producto Updated",
-            life: 3000,
+      if (this.objetoProducto.nombre.trim()) {
+        if (this.objetoProducto.id_producto) {
+          this.ProductoService.editProducto({
+            id_producto: this.objetoProducto.id_producto,
+            nombre: this.objetoProducto.nombre,
+            codigo: this.objetoProducto.codigo,
+            existencia: this.objetoProducto.existencia,
+            bodega: this.objetoProducto.bodega,
+            descripcion: this.objetoProducto.descripcion,
+            id_estado: this.objetoProducto.id_estado,
           });
         } else {
-          this.producto.id = this.createId();
-          this.producto.image = "producto-placeholder.svg";
-          this.productos.push(this.producto);
-          this.$toast.add({
-            severity: "success",
-            summary: "Successful",
-            detail: "Producto Created",
-            life: 3000,
+          this.ProductoService.addProducto({
+            nombre: this.objetoProducto.nombre,
+            codigo: this.objetoProducto.codigo,
+            existencia: this.objetoProducto.existencia,
+            bodega: this.objetoProducto.bodega,
+            descripcion: this.objetoProducto.descripcion,
+            id_estado: this.objetoProducto.id_estado,
           });
         }
-
         this.productoDialog = false;
-        this.producto = {};
+        this.consultarProductos();
       }
     },
   },
@@ -221,4 +302,11 @@ export default {
 </script>
 
 <style>
+.ivu-table th {
+  background-color: #017aaf;
+  color: white;
+}
+.ivu-table-wrapper {
+  margin-top: 10px;
+}
 </style>

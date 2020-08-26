@@ -33,7 +33,7 @@
                 >Buscar</Button>
                 <CheckboxGroup style="float: right;">
                   <Checkbox label="Mostrar todos">Mostrar todos</Checkbox>
-                  <Checkbox label="Activos" v-model="filterActivos" v-bind="productos">
+                  <Checkbox label="Activos" v-model="filterActivos">
                     <span>Activos</span>
                   </Checkbox>
                   <Checkbox label="Inactivos" v-model="filterInactivos">
@@ -62,7 +62,7 @@
               </Table>
               <p
                 style="background-color: #017AAF;color: white;"
-              >Un producto registrado.[productos activos:{{contarActivos}}] - [Productos pendientes por activar:{{contarPendientes}}] - [productos inactivos:{{contarInactivos}}]</p>
+              >Un producto registrado.[productos activos: {{contarActivos}}] - [Productos pendientes por activar: {{contarPendientes}}] - [productos inactivos: {{contarInactivos}}]</p>
             </div>
 
             <!-- MODAL CREAR PRODUCTO -->
@@ -221,18 +221,12 @@ export default {
   computed: {
     filtrosCheck() {
       if (this.filterActivos == true) {
-        this.filterInactivos;
-        this.filterPendiente;
         return this.productos.filter((producto) => producto.id_estado == 1);
       }
       if (this.filterInactivos == true) {
-        this.filterActivos;
-        this.filterPendiente;
         return this.productos.filter((producto) => producto.id_estado == 2);
       }
       if (this.filterPendiente == true) {
-        this.filterInactivos;
-        this.filterActivos;
         return this.productos.filter((producto) => producto.id_estado == 3);
       } else {
         return this.productos;
@@ -279,7 +273,7 @@ export default {
       );
       this.loading = false;
     },
-    consultarEstados(param) {
+    consultarEstados() {
       this.ProductoService.getEstados().then(
         (estados) => (this.estados = estados)
       );
@@ -315,14 +309,9 @@ export default {
         bodega: this.objetoProducto.bodega,
         descripcion: this.objetoProducto.descripcion,
         id_estado: this.objetoProducto.id_estado,
-      })
-        .then((response) => {
-          this.consultarProductos();
-          this.limpiarCampos();
-          return response;
-        })
-
-        .catch((error) => {});
+      });
+      this.consultarProductos();
+      this.limpiarCampos();
     },
     limpiarCampos() {
       this.objetoProducto.id_producto = null;
