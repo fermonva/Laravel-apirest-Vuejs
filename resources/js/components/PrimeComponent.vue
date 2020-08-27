@@ -41,7 +41,7 @@
           <br />
 
           <!-- INICIO DATATABLE -->
-          <DataTable :value="filtrosCheck" class="p-datatable-sm" :paginator="true" :rows="10">
+          <DataTable :value="filtrosCheck" class="p-datatable-sm headerClass" :paginator="true" :rows="10">
             <Column field="nombre" header="Nombre del producto"></Column>
             <Column field="codigo" header="Código"></Column>
             <Column field="existencia" header="Existencia"></Column>
@@ -59,9 +59,12 @@
             <Column field="estado" header="Estado"></Column>
           </DataTable>
           <!-- FIN DATATABLE -->
+                    <p
+                style="background-color: #017AAF;color: white;"
+              >Un producto registrado.[productos activos: {{contarActivos}}] - [Productos pendientes por activar: {{contarPendientes}}] - [productos inactivos: {{contarInactivos}}]</p>
+    </div>
         </div>
       </div>
-    </div>
 
     <!-- MODAL CREAR PRODUCTO -->
     <Dialog
@@ -224,6 +227,24 @@ export default {
         return this.productos;
       }
     },
+        contarActivos() {
+      const activos = this.productos.filter(
+        (producto) => producto.id_estado == 1
+      );
+      return activos.length;
+    },
+    contarInactivos() {
+      const inactivos = this.productos.filter(
+        (producto) => producto.id_estado == 2
+      );
+      return inactivos.length;
+    },
+    contarPendientes() {
+      const pendientes = this.productos.filter(
+        (producto) => producto.id_estado == 3
+      );
+      return pendientes.length;
+    },
   },
   methods: {
     consultarProductos() {
@@ -299,10 +320,10 @@ export default {
     },
   },
 };
-</script>
+</script scoped>
 
 <style>
-.ivu-table th {
+.headerClass {
   background-color: #017aaf;
   color: white;
 }
