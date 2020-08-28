@@ -2,77 +2,96 @@
   <v-app>
     <v-container grid-list-xs>
       <h1 class="display-3">Vuetify Component</h1>
+      <v-card>
+        <div>
+          <strong>Gestión de Productos</strong>
+        </div>
+        <br />
 
-      <div>
-        <strong>Gestión de Productos</strong>
-      </div>
-      <br />
+        <v-row class="ml-4 mr-4" no-gutters>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Ingrese la busqueda"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-spacer></v-spacer>
 
-      <v-data-table :headers="headers" :items="productos" sort-by="Nombre">
-        <template v-slot:top>
-          <v-toolbar flat color="white">
-            <v-spacer></v-spacer>
+          <v-checkbox v-model="filterActivos" label="Activos"></v-checkbox>
+          <v-checkbox v-model="filterInactivos" label="Inactivos"></v-checkbox>
+          <v-checkbox v-model="filterPendiente" label="Pendiente"></v-checkbox>
+        </v-row>
 
-            <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn rounded color="primary" v-bind="attrs" v-on="on">Crear Producto</v-btn>
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="headline">{{ formTitle }}</span>
-                </v-card-title>
+        <v-data-table :headers="headers" :items="filtrosCheck" sort-by="Nombre" :search="search">
+          <template v-slot:top>
+            <v-toolbar flat color="white">
+              <v-spacer></v-spacer>
 
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.nombre" label="Nombre"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.codigo" label="Código"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.existencia" label="Existencia"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.bodega" label="Bodega"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.descripcion" label="Descripción"></v-text-field>
-                      </v-col>
+              <v-dialog v-model="dialog" max-width="500px">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn rounded color="primary" v-bind="attrs" v-on="on">Crear Producto</v-btn>
+                </template>
 
-                      <v-col cols="12" sm="6" md="4">
-                        <v-select
-                          v-model="editedItem.id_estado"
-                          :items="estados"
-                          item-text="nombre"
-                          item-value="id_estado"
-                          label="Estado"
-                        ></v-select>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">{{ formTitle }}</span>
+                  </v-card-title>
 
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
-                  <v-btn color="blue darken-1" text @click="save">Guardar</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-toolbar>
-        </template>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field v-model="editedItem.nombre" label="Nombre"></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field v-model="editedItem.codigo" label="Código"></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field v-model="editedItem.existencia" label="Existencia"></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field v-model="editedItem.bodega" label="Bodega"></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field v-model="editedItem.descripcion" label="Descripción"></v-text-field>
+                        </v-col>
 
-        <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-          <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-        </template>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-select
+                            v-model="editedItem.id_estado"
+                            :items="estados"
+                            item-text="nombre"
+                            item-value="id_estado"
+                            label="Estado"
+                          ></v-select>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
 
-        <template v-slot:no-data>
-          <v-btn color="primary" @click="productos">Reset</v-btn>
-        </template>
-      </v-data-table>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
+                    <v-btn color="blue darken-1" text @click="save">Guardar</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-toolbar>
+          </template>
+
+          <template v-slot:item.actions="{ item }">
+            <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+          </template>
+
+          <template v-slot:no-data>
+            <v-btn color="primary" @click="consultarProductos">Recargar</v-btn>
+          </template>
+        </v-data-table>
+        <p
+            
+          >Un producto registrado.[productos activos: {{contarActivos}}] - [Productos pendientes por activar: {{contarPendientes}}] - [productos inactivos: {{contarInactivos}}]</p>
+      </v-card>
     </v-container>
   </v-app>
 </template>
@@ -90,9 +109,10 @@ export default {
       { text: "Existencia", value: "existencia" },
       { text: "Bodega", value: "bodega" },
       { text: "Descripción", value: "descripcion" },
-      { text: "Acciones", value: "actions", sortable: false },
+      { text: "Acciones", value: "actions", sortable: false, align: "center" },
       { text: "Estado", value: "estado" },
     ],
+    search: "",
     productos: [],
     estados: [],
     editedIndex: -1,
@@ -114,11 +134,45 @@ export default {
       id_estado: "",
       estado: "",
     },
+    filterActivos: false,
+    filterInactivos: false,
+    filterPendiente: false,
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Nuevo producto" : "Edit Item";
+      return this.editedIndex === -1 ? "Nuevo producto" : "Editar producto";
+    },
+    filtrosCheck() {
+      if (this.filterActivos === true) {
+        return this.productos.filter((producto) => producto.id_estado == 1);
+      }
+      if (this.filterInactivos == true) {
+        return this.productos.filter((producto) => producto.id_estado == 2);
+      }
+      if (this.filterPendiente == true) {
+        return this.productos.filter((producto) => producto.id_estado == 3);
+      } else {
+        return this.productos;
+      }
+    },
+    contarActivos() {
+      const activos = this.productos.filter(
+        (producto) => producto.id_estado == 1
+      );
+      return activos.length;
+    },
+    contarInactivos() {
+      const inactivos = this.productos.filter(
+        (producto) => producto.id_estado == 2
+      );
+      return inactivos.length;
+    },
+    contarPendientes() {
+      const pendientes = this.productos.filter(
+        (producto) => producto.id_estado == 3
+      );
+      return pendientes.length;
     },
   },
 
@@ -157,13 +211,6 @@ export default {
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
-
-    deleteItem(item) {
-      const index = this.productos.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.productos.splice(index, 1);
-    },
-
     close() {
       this.dialog = false;
       this.$nextTick(() => {
