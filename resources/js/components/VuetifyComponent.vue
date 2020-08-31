@@ -88,9 +88,7 @@
             <v-btn color="primary" @click="consultarProductos">Recargar</v-btn>
           </template>
         </v-data-table>
-        <p
-            
-          >Un producto registrado.[productos activos: {{contarActivos}}] - [Productos pendientes por activar: {{contarPendientes}}] - [productos inactivos: {{contarInactivos}}]</p>
+        <p>Un producto registrado.[productos activos: {{contarActivos}}] - [Productos pendientes por activar: {{contarPendientes}}] - [productos inactivos: {{contarInactivos}}]</p>
       </v-card>
     </v-container>
   </v-app>

@@ -198,7 +198,7 @@ export default {
   },
   data() {
     return {
-      filtro_nombre: null,
+      filtro_nombre: "",
       productos: [],
       productoDialog: false,
       objetoProducto: {
