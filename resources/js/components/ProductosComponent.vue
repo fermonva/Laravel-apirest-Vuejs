@@ -159,6 +159,7 @@ export default {
   data() {
     return {
       loading: false,
+      pageSize: 10,
       column: [
         {
           title: "Nombre del producto",
@@ -199,6 +200,7 @@ export default {
       ],
       productosbuscar: [],
       productos: [],
+      historyProductos: [],
       filterActivos: false,
       filterInactivos: false,
       filterPendiente: false,

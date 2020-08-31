@@ -16,7 +16,8 @@ class ProductosController extends Controller
     {
 
         //Consultar accesos de inicio se sesiÃ³n
-        $productos = DB::select("SELECT  p.* , e.nombre as estado, b.nombre as bodega FROM productos p
+        $productos = DB::select("SELECT  p.* , e.nombre as estado, b.nombre as bodega 
+        			 FROM productos p
                                 inner join estados e on p.id_estado = e.id_estado
                                 inner join  bodegas b on p.id_bodega = b.id_bodega");
 

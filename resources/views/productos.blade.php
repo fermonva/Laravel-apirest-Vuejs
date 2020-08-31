@@ -8,7 +8,7 @@
     <br />
     <vuetify_component></vuetify_component>
     <br>
-    {{-- <bootstrap_component></bootstrap_component> --}}
+    <bootstrap_component></bootstrap_component>
     <br>
     {{-- <tareas_component></tareas_component> --}}
 </div>
