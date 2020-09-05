@@ -13,11 +13,12 @@ class ProductosController extends Controller
     public function consultarProductos()
     {
 
-        //Consultar accesos de inicio se sesiÃ³n
+        // Consultar a la base da datos
         $productos = DB::select("SELECT  p.* , e.nombre as estado, b.nombre as bodega
         			 FROM productos p
                                 inner join estados e on p.id_estado = e.id_estado
                                 inner join  bodegas b on p.id_bodega = b.id_bodega");
+
 
         // Validar la información de la consulta y mostrar respuesta
         if (!empty($productos)) {
@@ -42,6 +43,7 @@ class ProductosController extends Controller
 
     public function consultarEstados()
     {
+        // Consultar a la base da datos
         $estados = DB::select('SELECT  *  FROM estados e');
 
         // Validar la información de la consulta y mostrar respuesta
@@ -113,7 +115,7 @@ class ProductosController extends Controller
 
 
                     $json = array(
-                        "code" => 200,
+                        "code" => 201,
                         "status" => "success",
                         "message" => "Datos actualizados corectamente",
                         "producto" => $productos

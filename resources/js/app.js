@@ -16,11 +16,13 @@ import ViewUI from "view-design";
 import locale from "view-design/dist/locale/es-ES";
 Vue.use(ViewUI, { locale });
 
-
-// imortaciones de vuetify
+// importaciones de vuetify
 import Vuetify from "vuetify";
 Vue.use(Vuetify);
 
+// importaciones de Vuelidate
+import Vuelidate from "vuelidate";
+Vue.use(Vuelidate);
 
 // Registrar componentes vistas
 Vue.component(
@@ -46,6 +48,6 @@ Vue.component(
 
 const app = new Vue({
     el: "#app",
-    vuetify: new Vuetify(),
+    vuetify: new Vuetify()
     // store
 });

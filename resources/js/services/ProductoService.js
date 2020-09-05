@@ -16,12 +16,12 @@ export default class ProductoService {
     addProducto(data) {
         return axios
             .post("productos/crearProducto", data)
-            .then(response => response.data.msg);
+            .then(response => response.data);
     }
 
     editProducto(data) {
         return axios
             .post("productos/editarProducto", data)
-            .then(response => response.data.msg);
+            .then(response => response.data);
     }
 }

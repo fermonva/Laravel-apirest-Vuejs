@@ -42,29 +42,152 @@
                     <v-container>
                       <v-row>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.nombre" label="Nombre"></v-text-field>
+                          <v-text-field
+                            v-model.trim="$v.editedItem.nombre.$model"
+                            @v-text-field="$v.editedItem.nombre.$reset()"
+                            @blur="$v.editedItem.nombre.$touch()"
+                            label="*Nombre"
+                          ></v-text-field>
+                          <div v-if="$v.editedItem.nombre.$error">
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.nombre.required"
+                            >*Nombre es requerido</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.nombre.minLength"
+                            >Nombre debe tener {{$v.editedItem.nombre.$params.minLength.min}} caracteres minimo.</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.nombre.maxLength"
+                            >Nombre debe tener {{$v.editedItem.nombre.$params.maxLength.max}} caracteres maximo.</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.nombre.alpha"
+                            >No se aceptan números.</p>
+                          </div>
                         </v-col>
+
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.codigo" label="Código"></v-text-field>
+                          <v-text-field
+                            v-model.trim="$v.editedItem.codigo.$model"
+                            @v-text-field="$v.editedItem.codigo.$reset()"
+                            @blur="$v.editedItem.codigo.$touch()"
+                            label="*Código"
+                          ></v-text-field>
+                          <div v-if="$v.editedItem.codigo.$error">
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.codigo.required"
+                            >*Código es requerido</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.codigo.minLength"
+                            >Código debe tener {{$v.editedItem.codigo.$params.minLength.min}} caracteres minimo.</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.codigo.maxLength"
+                            >Código debe tener {{$v.editedItem.codigo.$params.maxLength.max}} caracteres maximo.</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.codigo.alphaNum"
+                            >Solo valores alfa númericos.</p>
+                          </div>
                         </v-col>
+
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.existencia" label="Existencia"></v-text-field>
+                          <v-text-field
+                            v-model.trim="$v.editedItem.existencia.$model"
+                            @v-text-field="$v.editedItem.existencia.$reset()"
+                            @blur="$v.editedItem.existencia.$touch()"
+                            label="*Existencia"
+                          ></v-text-field>
+                          <div v-if="$v.editedItem.existencia.$error">
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.existencia.required"
+                            >*Existencia es requerido</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.existencia.minLength"
+                            >Existencia debe tener {{$v.editedItem.existencia.$params.minLength.min}} caracteres minimo.</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.existencia.maxLength"
+                            >Existencia debe tener {{$v.editedItem.existencia.$params.maxLength.max}} caracteres maximo.</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.existencia.numeric"
+                            >Solo se aceptan números.</p>
+                          </div>
                         </v-col>
+
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.bodega" label="Bodega"></v-text-field>
+                          <v-text-field
+                            v-model.trim="$v.editedItem.bodega.$model"
+                            @v-text-field="$v.editedItem.bodega.$reset()"
+                            @blur="$v.editedItem.bodega.$touch()"
+                            label="*Bodega"
+                          ></v-text-field>
+                          <div v-if="$v.editedItem.bodega.$error">
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.bodega.required"
+                            >*Bodega es requerido</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.bodega.minLength"
+                            >Bodega debe tener {{$v.editedItem.bodega.$params.minLength.min}} caracteres minimo.</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.bodega.maxLength"
+                            >Bodega debe tener {{$v.editedItem.bodega.$params.maxLength.max}} caracteres maximo.</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.bodega.alpha"
+                            >No se aceptan números.</p>
+                          </div>
                         </v-col>
+
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.descripcion" label="Descripción"></v-text-field>
+                          <v-text-field
+                            v-model.trim="$v.editedItem.descripcion.$model"
+                            @v-text-field="$v.editedItem.descripcion.$reset()"
+                            @blur="$v.editedItem.descripcion.$touch()"
+                            label="*Descripción"
+                          ></v-text-field>
+                          <div v-if="$v.editedItem.descripcion.$error">
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.descripcion.minLength"
+                            >Descripción debe tener {{$v.editedItem.descripcion.$params.minLength.min}} caracteres minimo.</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.descripcion.maxLength"
+                            >Descripción debe tener {{$v.editedItem.descripcion.$params.maxLength.max}} caracteres maximo.</p>
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.descripcion.alpha"
+                            >No se aceptan números.</p>
+                          </div>
                         </v-col>
 
                         <v-col cols="12" sm="6" md="4">
                           <v-select
-                            v-model="editedItem.id_estado"
+                            v-model.trim="$v.editedItem.id_estado.$model"
+                            @v-text-field="$v.editedItem.id_estado.$reset()"
+                            @blur="$v.editedItem.id_estado.$touch()"
                             :items="estados"
                             item-text="nombre"
                             item-value="id_estado"
-                            label="Estado"
+                            label="*Estado"
                           ></v-select>
+                          <div v-if="$v.editedItem.id_estado.$error">
+                            <p
+                              class="red--text text--lighten-1"
+                              v-if="!$v.editedItem.id_estado.required"
+                            >*Estado es requerido</p>
+                          </div>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -73,13 +196,12 @@
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
-                    <v-btn color="blue darken-1" text @click="save">Guardar</v-btn>
+                    <v-btn color="blue darken-1" text @click="save" :disabled="$v.$invalid">Guardar</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
             </v-toolbar>
           </template>
-
           <template v-slot:item.actions="{ item }">
             <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
           </template>
@@ -90,11 +212,23 @@
         </v-data-table>
         <p>Un producto registrado.[productos activos: {{contarActivos}}] - [Productos pendientes por activar: {{contarPendientes}}] - [productos inactivos: {{contarInactivos}}]</p>
       </v-card>
+      <v-snackbar v-model="snackbar.show" :timeout="5000" top :color="snackbar.color">
+        <span>{{snackbar.message}}. {{snackbar.errors}}</span>
+        <v-btn dark text @click="snackbar = false">Close</v-btn>
+      </v-snackbar>
     </v-container>
   </v-app>
 </template>
 <script>
 import ProductoService from "../services/ProductoService";
+import {
+  required,
+  minLength,
+  maxLength,
+  alpha,
+  alphaNum,
+  numeric,
+} from "vuelidate/lib/validators";
 export default {
   data: () => ({
     dialog: false,
@@ -135,8 +269,49 @@ export default {
     filterActivos: false,
     filterInactivos: false,
     filterPendiente: false,
+    snackbar: {
+      show: false,
+      message: null,
+      errors: null,
+      color: null,
+    },
   }),
-
+  validations: {
+    editedItem: {
+      nombre: {
+        required,
+        alpha,
+        minLength: minLength(3),
+        maxLength: maxLength(15),
+      },
+      codigo: {
+        required,
+        alphaNum,
+        minLength: minLength(3),
+        maxLength: maxLength(15),
+      },
+      existencia: {
+        required,
+        numeric,
+        minLength: minLength(1),
+        maxLength: maxLength(15),
+      },
+      bodega: {
+        required,
+        alpha,
+        minLength: minLength(3),
+        maxLength: maxLength(15),
+      },
+      descripcion: {
+        alpha,
+        minLength: minLength(3),
+        maxLength: maxLength(15),
+      },
+      id_estado: {
+        required,
+      },
+    },
+  },
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo producto" : "Editar producto";
@@ -228,7 +403,15 @@ export default {
           bodega: this.editedItem.bodega,
           descripcion: this.editedItem.descripcion,
           id_estado: this.editedItem.id_estado,
-        });
+        }).then(
+          (data) =>
+            (this.snackbar = {
+              message: data.message,
+              errors: data.errors ? data.errors.descripcion : "",
+              color: data.status,
+              show: true,
+            })
+        );
       } else {
         this.productos.push(this.editedItem);
         this.ProductoService.addProducto({
@@ -238,7 +421,15 @@ export default {
           bodega: this.editedItem.bodega,
           descripcion: this.editedItem.descripcion,
           id_estado: this.editedItem.id_estado,
-        });
+        }).then(
+          (data) =>
+            (this.snackbar = {
+              message: data.message,
+              errors: data.errors ? data.errors.descripcion : "",
+              color: data.status,
+              show: true,
+            })
+        );
       }
       this.consultarProductos();
       this.close();
